@@ -1,0 +1,2520 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#eef5f8">
+<title>StudyVault</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+<style>
+:root{
+  --bg:#07101c;--bg2:#0b1728;--glass:rgba(255,255,255,.075);--glass2:rgba(255,255,255,.11);
+  --line:rgba(255,255,255,.10);--text:#f7f9ff;--muted:#9aa7b7;--blue:#4f7cff;--blue2:#6b55f6;
+  --green:#39d2a3;--red:#ff747d;--yellow:#ffc861;--shadow:0 18px 55px rgba(0,0,0,.35)
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;color:var(--text);
+  background:
+    radial-gradient(circle at 18% -4%,rgba(53,104,203,.28),transparent 31%),
+    radial-gradient(circle at 96% 12%,rgba(106,61,190,.20),transparent 24%),
+    linear-gradient(180deg,var(--bg2),var(--bg));
+  padding-bottom:calc(96px + env(safe-area-inset-bottom))
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{width:min(100%,900px);margin:auto;padding:calc(16px + env(safe-area-inset-top)) 16px 24px}
+.glass{
+  background:linear-gradient(180deg,rgba(255,255,255,.105),rgba(255,255,255,.05));
+  border:1px solid var(--line);box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.05);
+  backdrop-filter:blur(28px) saturate(150%);-webkit-backdrop-filter:blur(28px) saturate(150%)
+}
+.panel{display:none}.panel.active{display:block}
+.hero{padding:26px;border-radius:30px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-80px;top:-80px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(82,110,255,.35),transparent 67%)}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.08em;color:#b8c8dd}
+.hero h1{font-size:clamp(30px,6vw,48px);line-height:1.02;letter-spacing:-.045em;margin:7px 0 10px}
+.hero p{color:var(--muted);line-height:1.5;margin:0;max-width:620px}
+.searchbar{margin-top:20px;display:flex;align-items:center;gap:10px;padding:13px 14px;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
+.searchbar input{border:0;background:transparent;outline:0;color:white;width:100%;padding:0}.searchbar input::placeholder{color:#7f8ca0}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:22px 4px 12px}
+.section-title h2{margin:0;font-size:20px;letter-spacing:-.025em}.section-title .link{border:0;background:none;color:#82a4ff;font-weight:700;font-size:13px;padding:0}
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.quick-card{border-radius:22px;padding:16px;min-height:150px;text-align:left;color:white}.quick-card:active{transform:scale(.985)}
+.qicon{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;margin-bottom:20px;background:linear-gradient(135deg,var(--blue),var(--blue2));box-shadow:0 10px 24px rgba(79,124,255,.25)}
+.qicon.green{background:linear-gradient(135deg,#27a975,#48d8aa)}.qicon.purple{background:linear-gradient(135deg,#7e50ff,#b15cf4)}
+.quick-card b{display:block;font-size:16px;margin-bottom:8px}.quick-card small{display:block;color:var(--muted);line-height:1.4}
+.list-card,.form-card,.stats-card,.detail-card,.filter-card{border-radius:25px;overflow:hidden}
+.report-row{display:flex;gap:13px;align-items:center;padding:16px;border-bottom:1px solid rgba(255,255,255,.07);background:transparent;color:white;width:100%;text-align:left;border-left:0;border-right:0;border-top:0}
+.report-row:last-child{border-bottom:0}.report-row .badge{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex:0 0 auto;font-weight:800;background:linear-gradient(135deg,#7656f9,#493196)}
+.report-row .main{flex:1;min-width:0}.report-row b{display:block;margin-bottom:4px}.meta{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chev{font-size:22px;opacity:.45}
+.filter-card{padding:14px;display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end}
+label{display:block;font-size:12px;font-weight:700;color:#b7c2d0;margin:0 0 7px 2px}
+input,select,textarea{width:100%;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.055);color:white;border-radius:15px;padding:13px 14px;outline:0}
+select option{color:#111}textarea{min-height:120px;resize:vertical;line-height:1.45}input::placeholder,textarea::placeholder{color:#738096}
+input:focus,select:focus,textarea:focus{border-color:rgba(105,135,255,.72);box-shadow:0 0 0 3px rgba(79,124,255,.12)}
+.btn{border:0;border-radius:15px;padding:13px 16px;color:#fff;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--blue2));box-shadow:0 10px 24px rgba(79,124,255,.23)}
+.btn.secondary{background:rgba(255,255,255,.08);box-shadow:none}.btn.danger{background:rgba(255,116,125,.12);color:#ff969c;box-shadow:none;border:1px solid rgba(255,116,125,.18)}
+.form-card{padding:18px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin-bottom:12px}.actions{display:flex;gap:10px;flex-wrap:wrap}
+.report-detail{padding:18px;border-radius:24px;margin-bottom:12px}.report-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.report-head h3{margin:0;font-size:18px}.chips{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0 16px}.chip{padding:7px 10px;border-radius:999px;font-size:11px;font-weight:800;background:rgba(82,109,255,.15);color:#a9b9ff;border:1px solid rgba(112,137,255,.16)}
+.chip.gray{background:rgba(255,255,255,.06);color:#c5ceda;border-color:rgba(255,255,255,.08)}.detail-label{font-size:13px;font-weight:800;margin:14px 0 6px}.detail-text{font-size:14px;color:#bac4d1;line-height:1.55;white-space:pre-wrap}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px}.stat{border-radius:18px;padding:16px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.07)}.stat small{color:var(--muted)}.stat b{display:block;font-size:28px;margin-top:5px}
+.note{color:var(--muted);font-size:12px;line-height:1.5}.empty{text-align:center;color:var(--muted);padding:28px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 16px}.back,.iconbtn{width:40px;height:40px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.06);color:#fff;display:grid;place-items:center}
+.topbar-title{text-align:center;flex:1}.topbar-title b{display:block}.topbar-title small{color:var(--muted)}
+.detail-card{padding:18px}.detail-hero{display:flex;gap:14px;align-items:center}.detail-badge{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;background:linear-gradient(135deg,#7656f9,#493196);font-size:22px;font-weight:900}
+.detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}.favorite.active{background:rgba(255,200,97,.14);color:#ffd47d;border:1px solid rgba(255,200,97,.18)}
+.topic-tags{display:flex;gap:7px;flex-wrap:wrap}.topic-tag{padding:8px 10px;border-radius:999px;background:rgba(85,111,255,.13);border:1px solid rgba(105,130,255,.17);color:#b9c6ff;font-size:12px}
+.bottom-nav{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(calc(100% - 24px),640px);display:grid;grid-template-columns:repeat(5,1fr);padding:9px 10px;border-radius:27px;z-index:40;background:linear-gradient(180deg,rgba(24,33,48,.86),rgba(11,18,28,.88));border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 50px rgba(0,0,0,.42);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px)}
+.nav-btn{border:0;background:none;color:#8f9bae;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;font-size:11px;font-weight:700}.nav-btn.active{color:#7fa2ff}.nav-circle{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#567cff,#624ef1);box-shadow:0 10px 28px rgba(86,124,255,.38);margin-top:-17px;color:#fff}
+.toast{position:fixed;top:calc(18px + env(safe-area-inset-top));left:50%;transform:translate(-50%,-20px);padding:11px 15px;border-radius:16px;background:rgba(18,27,42,.9);border:1px solid rgba(255,255,255,.1);box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.2s;z-index:100}.toast.show{opacity:1;transform:translate(-50%,0)}
+.modal-wrap{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.45);z-index:80;padding:16px}.modal-wrap.show{display:flex}.modal{width:min(100%,620px);border-radius:28px 28px 22px 22px;padding:18px;max-height:88vh;overflow:auto}.modal h3{margin:0 0 8px}.modal p{color:var(--muted);line-height:1.5}
+.audio-box{padding:18px;border-radius:22px;text-align:center}.mic{width:76px;height:76px;border-radius:50%;margin:8px auto 14px;display:grid;place-items:center;background:linear-gradient(135deg,#7158ff,#3e7fff);box-shadow:0 14px 34px rgba(87,105,255,.32)}.timer{font-size:30px;font-weight:800;letter-spacing:-.03em}.recording .mic{animation:pulse 1.2s infinite}@keyframes pulse{50%{transform:scale(1.06);box-shadow:0 14px 44px rgba(87,105,255,.48)}}
+@media(max-width:720px){.quick-grid{grid-template-columns:1fr}.quick-card{min-height:auto}.filter-card{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.hero{padding:22px}}
+
+/* === StudyVault Design v2: University x Banking Liquid Glass === */
+:root{
+  --bg:#eef5f8;--bg2:#f8fbfc;--glass:rgba(255,255,255,.43);--glass2:rgba(255,255,255,.62);
+  --line:rgba(255,255,255,.82);--text:#0b2d57;--muted:#718296;--blue:#4d79c7;--blue2:#7d9bd1;
+  --green:#3f9f86;--orange:#d98c4e;--red:#c96a70;--yellow:#dfad49;
+  --shadow:0 22px 55px rgba(32,65,96,.13),0 5px 16px rgba(39,75,107,.07)
+}
+html,body{background:#eef5f8;color:var(--text)}
+body{
+  position:relative;color:var(--text);
+  background:
+    radial-gradient(circle at 18% 8%,rgba(255,255,255,.95),transparent 27%),
+    radial-gradient(circle at 84% 13%,rgba(208,225,236,.72),transparent 24%),
+    linear-gradient(180deg,#edf5f8 0%,#f8fbfc 38%,#edf3f5 100%);
+  background-attachment:fixed
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    linear-gradient(90deg,transparent 0 7%,rgba(255,255,255,.42) 7% 8%,transparent 8% 18%,rgba(255,255,255,.30) 18% 19%,transparent 19% 100%),
+    linear-gradient(180deg,transparent 0 58%,rgba(92,125,149,.08) 58% 59%,transparent 59%),
+    radial-gradient(ellipse at 12% 68%,rgba(91,145,117,.18),transparent 20%),
+    radial-gradient(ellipse at 89% 72%,rgba(71,119,101,.12),transparent 18%);
+  opacity:.8
+}
+body::after{
+  content:"";position:fixed;left:-8vw;right:-8vw;bottom:7vh;height:34vh;z-index:-1;pointer-events:none;opacity:.30;
+  background:linear-gradient(90deg,transparent 0 6%,rgba(63,91,117,.18) 6% 9%,transparent 9% 15%,rgba(63,91,117,.14) 15% 18%,transparent 18% 27%,rgba(63,91,117,.18) 27% 31%,transparent 31% 45%,rgba(63,91,117,.14) 45% 48%,transparent 48% 66%,rgba(63,91,117,.18) 66% 70%,transparent 70% 82%,rgba(63,91,117,.14) 82% 85%,transparent 85%);
+  clip-path:polygon(0 72%,7% 72%,7% 35%,14% 35%,14% 55%,23% 55%,23% 22%,39% 22%,39% 53%,52% 53%,52% 32%,64% 32%,64% 58%,78% 58%,78% 27%,91% 27%,91% 72%,100% 72%,100% 100%,0 100%)
+}
+.glass{
+  background:linear-gradient(145deg,rgba(255,255,255,.66),rgba(255,255,255,.27));
+  border:1px solid rgba(255,255,255,.88);
+  box-shadow:0 24px 60px rgba(49,77,105,.14),0 7px 18px rgba(49,77,105,.07),inset 0 1.2px 0 rgba(255,255,255,.98),inset 0 -1px 0 rgba(72,105,131,.07);
+  backdrop-filter:blur(24px) saturate(135%);-webkit-backdrop-filter:blur(24px) saturate(135%)
+}
+.hero{
+  background:linear-gradient(145deg,rgba(255,255,255,.60),rgba(244,249,251,.27));
+  border:1px solid rgba(255,255,255,.88);
+  box-shadow:0 28px 70px rgba(31,66,96,.12),inset 0 1px 0 rgba(255,255,255,1)
+}
+.hero::after{width:290px;height:290px;right:-110px;top:-120px;background:radial-gradient(circle,rgba(119,160,197,.19),transparent 67%)}
+.eyebrow{color:#627a94}.hero h1{color:#0b2d57}.hero p{color:#6f8194}
+.searchbar{
+  background:rgba(255,255,255,.47);border:1px solid rgba(255,255,255,.86);
+  box-shadow:0 12px 28px rgba(39,71,99,.07),inset 0 1px 0 rgba(255,255,255,.93)
+}
+.searchbar input{color:#173a61}.searchbar input::placeholder{color:#8190a1}
+.section-title h2,.topbar-title b,.detail-label{color:#12345d}.section-title .link,.link{color:#4e75ad}
+.quick-card{color:#17385e;background:linear-gradient(145deg,rgba(255,255,255,.58),rgba(255,255,255,.27))}
+.quick-card small,.meta,.note,.topbar-title small,.detail-text{color:#728397}
+.qicon{color:white;background:linear-gradient(145deg,#668ac9,#90aad7);box-shadow:0 12px 26px rgba(72,109,164,.20),inset 0 1px 0 rgba(255,255,255,.45)}
+.qicon.green{background:linear-gradient(145deg,#56a993,#78bca8)}
+.qicon.purple{background:linear-gradient(145deg,#c58a58,#dfa67a)}
+.report-row{color:#17385e;border-bottom-color:rgba(16,55,88,.07)}
+.report-row .badge,.detail-badge{color:white;background:linear-gradient(145deg,#6c8fca,#8da8d6);box-shadow:0 10px 22px rgba(74,108,155,.16),inset 0 1px 0 rgba(255,255,255,.42)}
+.chev{color:#59718a}
+.filter-card,.form-card,.stats-card,.detail-card,.report-detail,.list-card{background:linear-gradient(145deg,rgba(255,255,255,.59),rgba(255,255,255,.26))}
+label{color:#4e6782}
+input,select,textarea{color:#17385e;background:rgba(255,255,255,.48);border:1px solid rgba(255,255,255,.86);box-shadow:inset 0 1px 0 rgba(255,255,255,.92)}
+input::placeholder,textarea::placeholder{color:#8795a5}
+input:focus,select:focus,textarea:focus{border-color:rgba(87,128,184,.42);box-shadow:0 0 0 3px rgba(87,128,184,.10),inset 0 1px 0 rgba(255,255,255,.95)}
+.btn{background:linear-gradient(135deg,#5f83bd,#819cc8);box-shadow:0 12px 24px rgba(70,104,150,.18),inset 0 1px 0 rgba(255,255,255,.24)}
+.btn.secondary{color:#294b71;background:rgba(255,255,255,.46);border:1px solid rgba(255,255,255,.76);box-shadow:0 7px 16px rgba(39,68,94,.06)}
+.btn.danger{color:#a7595f;background:rgba(255,245,245,.58);border-color:rgba(186,92,100,.12)}
+.chip,.topic-tag{color:#466c9f;background:rgba(105,143,194,.11);border-color:rgba(86,124,177,.12)}
+.chip.gray{color:#60778f;background:rgba(255,255,255,.42);border-color:rgba(255,255,255,.74)}
+.stat{background:rgba(255,255,255,.42);border-color:rgba(255,255,255,.78);box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}.stat b{color:#17395f}
+.back,.iconbtn{color:#21466f;background:rgba(255,255,255,.45);border-color:rgba(255,255,255,.82);box-shadow:0 8px 18px rgba(44,71,96,.07),inset 0 1px 0 rgba(255,255,255,.92)}
+.favorite.active{color:#a8782f;background:rgba(255,247,224,.55);border-color:rgba(205,161,81,.18)}
+.bottom-nav{
+  color:#294a70;background:linear-gradient(180deg,rgba(255,255,255,.64),rgba(247,250,252,.43));
+  border:1px solid rgba(255,255,255,.90);
+  box-shadow:0 22px 50px rgba(38,68,94,.15),0 5px 14px rgba(38,68,94,.06),inset 0 1px 0 rgba(255,255,255,1);
+  backdrop-filter:blur(28px) saturate(140%);-webkit-backdrop-filter:blur(28px) saturate(140%)
+}
+.nav-btn{color:#70839a;min-height:50px;justify-content:center}.nav-btn.active{color:#174679}.nav-btn span:first-child{font-size:19px;line-height:1}
+.nav-circle{width:auto;height:auto;border-radius:0;display:inline;margin:0;background:none;box-shadow:none;color:inherit;font-size:21px}
+.toast{color:#17385e;background:rgba(255,255,255,.78);border-color:rgba(255,255,255,.96);box-shadow:0 18px 40px rgba(39,68,94,.14);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.modal-wrap{background:rgba(37,55,70,.19)}
+.modal{background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(244,249,251,.64))}
+.modal p{color:#728397}.audio-box{color:#17385e}
+.mic{background:linear-gradient(145deg,#678dc9,#8cadd6);box-shadow:0 14px 32px rgba(73,111,162,.22)}
+.quick-card,.report-row,.btn,.nav-btn,.back,.iconbtn{-webkit-tap-highlight-color:transparent}
+.quick-card:active,.btn:active,.report-row:active,.back:active,.iconbtn:active{transform:scale(.985)}
+@media(max-width:720px){.app{padding-left:14px;padding-right:14px}.glass{backdrop-filter:blur(22px) saturate(132%);-webkit-backdrop-filter:blur(22px) saturate(132%)}}
+
+
+/* === Audio AI flow === */
+.glass-soft{
+  background:rgba(255,255,255,.34);
+  border:1px solid rgba(255,255,255,.72);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 24px rgba(44,71,96,.05);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)
+}
+.audio-steps{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:2px 0 16px
+}
+.audio-step{
+  display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:14px;
+  background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.5);color:#8291a1
+}
+.audio-step span{
+  width:24px;height:24px;border-radius:50%;display:grid;place-items:center;
+  font-size:11px;font-weight:800;background:rgba(120,144,165,.13)
+}
+.audio-step small{font-weight:700;font-size:11px}
+.audio-step.active{color:#184a7c;background:rgba(255,255,255,.52);border-color:rgba(255,255,255,.88)}
+.audio-step.active span{background:#6f91c8;color:white}
+.audio-view{display:none}.audio-view.active{display:block}
+.audio-hint{margin:18px 0;padding:14px;border-radius:18px;text-align:left;display:grid;gap:6px}
+.audio-hint b{color:#17385e;font-size:13px;margin-bottom:2px}
+.audio-hint span{color:#748497;font-size:12px;padding-left:14px;position:relative}
+.audio-hint span:before{content:"•";position:absolute;left:2px;color:#6088bf}
+.ai-card{padding:16px;border-radius:22px;margin-bottom:14px}
+.ai-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+.ai-card-head b{display:block;color:#14375f;font-size:16px}
+.ai-card-head small{display:block;color:#7c8b9b;margin-top:3px}
+.ai-badge{padding:6px 9px;border-radius:999px;font-size:10px;font-weight:800;background:rgba(94,129,178,.12);color:#4f74a7}
+.ai-badge.success{background:rgba(77,158,134,.12);color:#3c8f77}
+.transcript-area{min-height:170px;line-height:1.55;background:rgba(255,255,255,.46)}
+.summary-section{margin-top:16px}
+.summary-section label{font-size:12px;color:#4b6681}
+.summary-chips{display:flex;gap:7px;flex-wrap:wrap}
+.summary-chip{padding:8px 10px;border-radius:999px;background:rgba(97,135,184,.12);border:1px solid rgba(96,133,181,.12);color:#4c73a5;font-size:12px;font-weight:700}
+.summary-list{margin:0;padding-left:19px;color:#607387;line-height:1.55;font-size:13px}
+.summary-list li{margin:5px 0}
+
+
+/* ==========================================================
+   STUDYVAULT v4 — Apple Campus / Academic Finance
+   Deliberately overrides earlier prototype styling.
+   ========================================================== */
+:root{
+ --ink:#0a2747; --ink2:#173c60; --muted2:#6f8294;
+ --accent:#2f679e; --sage:#5e927f; --warm:#b98055;
+ --glass-hi:rgba(255,255,255,.53); --glass-lo:rgba(241,248,250,.23);
+ --hairline:rgba(255,255,255,.84);
+ --deep-shadow:0 30px 80px rgba(28,57,80,.13),0 9px 24px rgba(28,57,80,.07);
+}
+body{
+ min-height:100vh;
+ background:
+   radial-gradient(ellipse at 12% 5%,rgba(255,255,255,.98) 0 15%,transparent 42%),
+   radial-gradient(ellipse at 88% 13%,rgba(188,214,226,.45),transparent 38%),
+   linear-gradient(155deg,#e8f1f4 0%,#f6faf9 47%,#e6f0ee 100%);
+ overflow-x:hidden;
+}
+body::before{
+ content:""; position:fixed; inset:0; z-index:-3; pointer-events:none;
+ background:
+   linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.22)),
+   radial-gradient(ellipse at 13% 78%,rgba(83,133,107,.17),transparent 18%),
+   radial-gradient(ellipse at 87% 73%,rgba(73,121,101,.14),transparent 17%);
+}
+/* architectural glass-campus suggestion, intentionally soft */
+body::after{
+ content:""; position:fixed; z-index:-2; pointer-events:none;
+ width:78vw; height:48vh; left:11vw; bottom:-12vh;
+ border-radius:34px 34px 0 0;
+ background:
+   linear-gradient(90deg,
+    rgba(255,255,255,.14) 0 8%,rgba(76,110,131,.065) 8% 9%,rgba(255,255,255,.13) 9% 20%,
+    rgba(76,110,131,.06) 20% 21%,rgba(255,255,255,.10) 21% 34%,rgba(76,110,131,.06) 34% 35%,
+    rgba(255,255,255,.12) 35% 49%,rgba(76,110,131,.06) 49% 50%,rgba(255,255,255,.11) 50% 65%,
+    rgba(76,110,131,.06) 65% 66%,rgba(255,255,255,.12) 66% 80%,rgba(76,110,131,.06) 80% 81%,
+    rgba(255,255,255,.11) 81% 100%);
+ border:1px solid rgba(255,255,255,.28);
+ transform:perspective(900px) rotateX(3deg);
+ filter:blur(.25px);
+ opacity:.72;
+}
+.app{width:min(100%,980px);padding-left:20px;padding-right:20px}
+
+/* One coherent liquid material */
+.glass,.hero,.quick-card,.list-card,.filter-card,.form-card,.stats-card,.detail-card,.report-detail{
+ position:relative;
+ background:
+   linear-gradient(135deg,rgba(255,255,255,.61) 0%,rgba(255,255,255,.34) 42%,rgba(230,242,246,.23) 100%);
+ border:1px solid rgba(255,255,255,.88);
+ box-shadow:
+   var(--deep-shadow),
+   inset 0 1.2px 0 rgba(255,255,255,.98),
+   inset 1px 0 0 rgba(255,255,255,.38),
+   inset 0 -1px 0 rgba(53,91,115,.055);
+ backdrop-filter:blur(32px) saturate(150%) brightness(1.035);
+ -webkit-backdrop-filter:blur(32px) saturate(150%) brightness(1.035);
+}
+.glass::before,.hero::before,.quick-card::before,.form-card::before,.stats-card::before,.detail-card::before,.report-detail::before{
+ content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+ background:linear-gradient(118deg,rgba(255,255,255,.33),transparent 22%,transparent 72%,rgba(255,255,255,.11));
+ mix-blend-mode:screen;
+}
+.hero{
+ padding:34px 34px 30px;border-radius:34px;
+ background:
+   radial-gradient(circle at 92% 10%,rgba(160,199,216,.24),transparent 30%),
+   linear-gradient(135deg,rgba(255,255,255,.66),rgba(241,248,250,.27));
+}
+.hero h1{font-size:clamp(36px,5vw,55px);letter-spacing:-.052em;line-height:.99;color:var(--ink);max-width:630px}
+.hero p{font-size:15px;color:var(--muted2);max-width:670px}
+.eyebrow{font-size:11px;letter-spacing:.14em;color:#58728a}
+.searchbar{
+ margin-top:24px;padding:14px 16px;border-radius:17px;
+ background:rgba(255,255,255,.40);
+ border:1px solid rgba(255,255,255,.84);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 8px 25px rgba(38,70,92,.055)
+}
+.searchbar input{font-size:15px}
+.section-title{margin:26px 5px 12px}.section-title h2{font-size:20px;color:var(--ink);letter-spacing:-.035em}
+.section-title .link{font-size:12px;color:#47719b}
+
+/* Quick actions become lighter floating glass, not three opaque boxes */
+.quick-grid{gap:14px}
+.quick-card{
+ min-height:145px;border-radius:25px;padding:18px;
+ box-shadow:0 18px 44px rgba(30,58,79,.10),inset 0 1px 0 rgba(255,255,255,.95);
+}
+.qicon{
+ width:42px;height:42px;border-radius:13px;margin-bottom:18px;
+ background:linear-gradient(145deg,#668bb8,#8ba8ca);
+ box-shadow:0 9px 22px rgba(64,100,138,.17),inset 0 1px 0 rgba(255,255,255,.4);
+ font-size:19px
+}
+.qicon.green{background:linear-gradient(145deg,#5f9a85,#82b3a2)}
+.qicon.purple{background:linear-gradient(145deg,#b77c52,#d7a27b)}
+.quick-card b{font-size:15px;letter-spacing:-.015em;color:#163858}.quick-card small{font-size:12px}
+
+/* cleaner academic list */
+.list-card{border-radius:26px;overflow:hidden}
+.report-row{padding:15px 17px;background:transparent}
+.report-row .badge{
+ width:43px;height:43px;border-radius:13px;
+ background:linear-gradient(145deg,#6689b8,#91aacb);
+ box-shadow:0 8px 18px rgba(52,88,125,.13)
+}
+.report-row b{font-size:15px;color:#173958}
+.meta{font-size:11.5px}
+.chev{font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-weight:300}
+
+/* Bottom bar: thinner, more transparent, truly floating, equal tabs */
+.bottom-nav{
+ width:min(calc(100% - 30px),680px);
+ bottom:calc(12px + env(safe-area-inset-bottom));
+ padding:7px 8px;
+ border-radius:24px;
+ background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(239,247,249,.35));
+ border:1px solid rgba(255,255,255,.91);
+ box-shadow:0 22px 48px rgba(26,53,73,.15),0 5px 14px rgba(26,53,73,.06),inset 0 1px 0 rgba(255,255,255,1);
+ backdrop-filter:blur(34px) saturate(160%);
+ -webkit-backdrop-filter:blur(34px) saturate(160%);
+}
+.nav-btn{min-height:47px;padding:5px 3px;gap:3px;font-size:10.5px;color:#74879a}
+.nav-btn.active{color:#164b78}
+.nav-btn span:first-child{font-size:18px}
+.nav-circle{font-size:19px!important}
+
+/* Profile: less "admin dashboard", more personal overview */
+.stats-card{border-radius:29px}
+.stats-grid{padding:12px;gap:10px}
+.stat{
+ min-height:92px;border-radius:20px;padding:16px 17px;
+ background:rgba(255,255,255,.29);
+ border:1px solid rgba(255,255,255,.68);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.92)
+}
+.stat small{font-size:11px}.stat b{font-size:29px;color:#153858}
+.form-card{border-radius:27px}
+input,select,textarea{border-radius:14px;background:rgba(255,255,255,.39)}
+.btn{border-radius:14px}
+.modal{border-radius:30px 30px 24px 24px}
+
+/* iPad / desktop: don't let content look stretched */
+@media(min-width:760px){
+ .app{width:min(100%,940px)}
+ .hero{padding:34px 36px 30px}
+ .quick-grid{grid-template-columns:repeat(3,1fr)}
+ .quick-card{min-height:150px}
+}
+@media(max-width:720px){
+ body::after{width:120vw;left:-10vw;opacity:.48}
+ .hero{padding:25px 22px 23px;border-radius:29px}
+ .hero h1{font-size:38px}
+ .quick-card{min-height:auto}
+}
+
+
+/* === Learning / PDF Flashcards === */
+.learn-upload{
+  border-radius:22px;padding:16px;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center
+}
+.learn-upload-icon{
+  width:48px;height:48px;border-radius:15px;display:grid;place-items:center;
+  background:linear-gradient(145deg,#6a8fbe,#91abc9);color:white;font-size:24px;font-weight:700;
+  box-shadow:0 10px 22px rgba(66,101,139,.16),inset 0 1px 0 rgba(255,255,255,.42)
+}
+.learn-upload b{display:block;color:#17395a;margin-bottom:4px}
+.learn-upload small{color:#748496;line-height:1.35}
+.learn-file-info{
+  margin-top:12px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.35);
+  border:1px solid rgba(255,255,255,.7);color:#49647f;font-size:13px
+}
+.learn-progress{
+  margin-top:16px;border-radius:24px;padding:18px;display:flex;align-items:center;gap:16px
+}
+.learn-progress-ring{
+  width:62px;height:62px;border-radius:50%;display:grid;place-items:center;
+  background:conic-gradient(#6b8fba 0deg,#6b8fba 0deg,rgba(115,139,160,.12) 0deg);
+  position:relative
+}
+.learn-progress-ring:after{
+  content:"";position:absolute;inset:7px;border-radius:50%;background:rgba(247,251,252,.82);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95)
+}
+.learn-progress-ring span{position:relative;z-index:1;font-size:12px;font-weight:800;color:#315b84}
+.learn-progress b{display:block;color:#17395a;margin-bottom:4px}
+.learn-progress small{color:#748496}
+.deck-summary{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px;border-radius:24px;margin-bottom:16px
+}
+.deck-stat{
+  background:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.67);border-radius:18px;padding:14px
+}
+.deck-stat small{color:#738496;font-size:11px}.deck-stat b{display:block;color:#17395a;font-size:22px;margin-top:4px}
+.flashcard-wrap{perspective:1200px}
+.flashcard{
+  min-height:360px;border-radius:30px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;
+  transition:transform .34s ease,box-shadow .34s ease;
+  box-shadow:0 32px 80px rgba(33,65,91,.15),0 10px 24px rgba(33,65,91,.07),inset 0 1px 0 rgba(255,255,255,.96)
+}
+.flashcard.flipped{transform:rotateY(1.4deg) translateY(-2px)}
+.flashcard-top{display:flex;justify-content:space-between;gap:10px;align-items:center;color:#708297;font-size:12px}
+.flash-topic{padding:7px 10px;border-radius:999px;background:rgba(100,139,186,.12);color:#4f75a3;font-weight:700}
+.flashcard-content{padding:28px 12px;text-align:center}
+.flashcard-content small{display:block;color:#8391a1;margin-bottom:12px;text-transform:uppercase;letter-spacing:.08em;font-size:10px;font-weight:800}
+.flashcard-content h3{font-size:clamp(24px,4vw,34px);line-height:1.18;letter-spacing:-.035em;color:#12385d;margin:0}
+.flash-flip{align-self:center}
+.learn-rating{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:13px}
+.rating-btn{
+  border:1px solid rgba(255,255,255,.72);border-radius:16px;padding:13px 10px;font-weight:800;
+  background:rgba(255,255,255,.38);color:#54708b;box-shadow:0 8px 18px rgba(38,67,91,.05)
+}
+.rating-btn.again{color:#a35d61}.rating-btn.unsure{color:#a67834}.rating-btn.know{color:#3e806d}
+@media(max-width:720px){
+  .learn-upload{grid-template-columns:auto 1fr}
+  .learn-upload .btn{grid-column:1/-1}
+  .deck-summary{grid-template-columns:1fr 1fr 1fr}
+  .flashcard{min-height:330px}
+}
+
+
+/* === v8 real document intelligence === */
+#learnApiStatus.ok{color:#3f806e}
+#learnApiStatus.warn{color:#a77936}
+#learnApiStatus.error{color:#a8585e}
+.card-source{
+  display:inline-flex!important;align-items:center;justify-content:center;
+  margin:0 auto 12px;padding:7px 10px;border-radius:999px;
+  background:rgba(72,116,157,.095);border:1px solid rgba(72,116,157,.12);
+  color:#557590;font-size:10.5px;font-weight:750;letter-spacing:.01em
+}
+.card-source:empty{display:none!important}
+.saved-decks{display:grid;gap:10px}
+.saved-deck{
+  width:100%;display:flex;align-items:center;gap:13px;text-align:left;color:#17395a;
+  border:1px solid rgba(255,255,255,.75);border-radius:19px;padding:13px 14px;
+  background:rgba(255,255,255,.34);box-shadow:0 8px 20px rgba(39,68,93,.045)
+}
+.saved-deck-icon{
+  width:42px;height:42px;flex:0 0 auto;border-radius:13px;display:grid;place-items:center;
+  background:linear-gradient(145deg,#688db8,#91aac8);color:white;font-size:17px;
+}
+.saved-deck-main{min-width:0;flex:1}
+.saved-deck-main b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.saved-deck-main small{display:block;color:#758598;margin-top:4px}
+.saved-deck .chev{font-size:22px}
+.learn-error{
+  margin-top:14px;padding:13px 14px;border-radius:17px;
+  background:rgba(255,241,242,.58);border:1px solid rgba(190,98,105,.13);
+  color:#9e565d;font-size:12.5px;line-height:1.45
+}
+.learn-success-note{
+  margin-top:12px;padding:11px 13px;border-radius:15px;
+  background:rgba(232,247,241,.58);border:1px solid rgba(75,145,119,.12);
+  color:#417b68;font-size:12px
+}
+.source-excerpt{
+  margin-top:13px;padding:11px 13px;border-radius:15px;text-align:left;
+  background:rgba(255,255,255,.28);border:1px solid rgba(255,255,255,.62);
+  color:#748495;font-size:11.5px;line-height:1.45;font-style:italic
+}
+
+
+/* === v10 Accounts / profile / production audio === */
+.profile-identity{display:flex;align-items:center;gap:14px;padding:17px;border-radius:26px;margin-bottom:18px}
+.avatar{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;color:white;font-size:23px;font-weight:850;background:linear-gradient(145deg,#6489b7,#8daac9);box-shadow:0 12px 24px rgba(54,91,128,.16),inset 0 1px 0 rgba(255,255,255,.45)}
+.profile-main{min-width:0;flex:1}.profile-main small{color:#7a899a}.profile-main h2{margin:2px 0 3px;color:#15385b}.profile-main span{font-size:11px;color:#7b8b9b}
+.account-gate{position:fixed;inset:0;z-index:300;background:linear-gradient(145deg,#e7f0f3,#f8fbfa 55%,#e8f2ef);display:flex;align-items:center;justify-content:center;padding:22px}
+.account-gate.hidden{display:none}.account-card{width:min(100%,470px);padding:30px;border-radius:34px;text-align:center}.account-card h1{font-size:34px;line-height:1.04;letter-spacing:-.045em;color:#0b2d57;margin:10px 0}.account-card p{color:#728396;line-height:1.5;margin:0 0 22px}.account-card label{text-align:left}.account-logo{width:76px;height:76px;margin:0 auto 14px;border-radius:24px;display:grid;place-items:center;background:linear-gradient(145deg,#5d82b1,#85a7c5);box-shadow:0 18px 35px rgba(52,87,119,.18),inset 0 1px 0 rgba(255,255,255,.5)}.account-logo span{color:#fff;font-size:34px;font-weight:900}.account-primary{width:100%;margin-top:12px}.account-link{display:block;margin:16px auto 0;border:0;background:none}.account-error{margin-top:14px;padding:11px;border-radius:15px;background:rgba(255,236,238,.65);color:#9f555c;font-size:12px}.recovery-card{text-align:center}.recovery-code{font-size:25px;font-weight:850;letter-spacing:.08em;color:#15385a;padding:18px;border-radius:19px;background:rgba(255,255,255,.42);border:1px solid rgba(255,255,255,.75);margin:14px 0}.author-line{display:flex;align-items:center;gap:7px;margin-top:8px;color:#6f8193;font-size:11.5px}.author-dot{width:23px;height:23px;border-radius:8px;display:grid;place-items:center;background:rgba(91,130,172,.13);color:#426b96;font-weight:800}.own-badge{padding:4px 7px;border-radius:999px;background:rgba(74,145,117,.11);color:#427a68;font-size:9.5px;font-weight:800}.audio-live-note{font-size:11px;color:#748596;margin-top:10px}.audio-permission{padding:11px 13px;border-radius:15px;background:rgba(236,246,242,.7);color:#477a68;font-size:12px;margin:10px 0}.btn[disabled]{opacity:.48;cursor:not-allowed}
+
+
+/* === v13 exam summaries === */
+.exam-summary-btn{
+  margin-top:13px;width:100%;
+  display:flex;justify-content:center;align-items:center;gap:8px
+}
+.exam-summary-loading{
+  min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;color:#5f7389;padding:28px
+}
+.exam-summary-loading b{color:#17395a;margin-top:15px}
+.exam-summary-loading small{margin-top:5px}
+.summary-spinner{
+  width:42px;height:42px;border-radius:50%;
+  border:4px solid rgba(83,119,155,.12);
+  border-top-color:#6e91b8;
+  animation:svspin .9s linear infinite
+}
+@keyframes svspin{to{transform:rotate(360deg)}}
+.exam-summary-hero{
+  border-radius:22px;padding:17px;display:flex;justify-content:space-between;gap:15px;align-items:center
+}
+.exam-summary-hero h3{margin:10px 0 5px;color:#15395b}
+.exam-summary-hero p{margin:0;color:#6f8295;font-size:13px;line-height:1.5}
+.exam-summary-count{
+  min-width:72px;text-align:center;border-left:1px solid rgba(54,85,108,.08);padding-left:14px
+}
+.exam-summary-count b{display:block;font-size:27px;color:#17395a}
+.exam-summary-count small{font-size:10px;color:#78899a}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:11px}
+.summary-box{border-radius:19px;padding:14px}
+.summary-box label{margin-bottom:9px}
+.summary-box p{margin:0;color:#60758a;font-size:13px;line-height:1.5}
+.summary-footer{
+  display:flex;justify-content:space-between;gap:10px;margin:13px 3px 0;color:#7a8998;font-size:11px
+}
+@media(max-width:650px){.summary-grid{grid-template-columns:1fr}}
+
+
+:root{
+  --sv-bg:#0c0c0f;--sv-text:#f7f3f2;--sv-muted:#b8aaab;--sv-red:#e61f2a;
+  --sv-shadow:0 24px 70px rgba(0,0,0,.34),0 8px 24px rgba(0,0,0,.18);
+  --sv-ease:cubic-bezier(.22,1,.36,1);--sv-spring:cubic-bezier(.18,1.22,.32,1)
+}
+html,body{background:radial-gradient(circle at 80% -10%,rgba(190,21,31,.24),transparent 33%),radial-gradient(circle at 15% 88%,rgba(130,31,37,.16),transparent 30%),linear-gradient(160deg,#0b0b0e 0%,#171113 46%,#0b0c0f 100%);color:var(--sv-text)}
+.glass,.glass-soft,.hero,.quick-card,.list-card,.form-card,.stats-card,.detail-card,.report-detail,.saved-deck,.modal{
+  background:linear-gradient(145deg,rgba(62,45,50,.62),rgba(24,22,26,.36)),radial-gradient(circle at 10% 0%,rgba(255,255,255,.08),transparent 30%);
+  border:1px solid rgba(255,255,255,.11);box-shadow:var(--sv-shadow),inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter:blur(28px) saturate(145%);-webkit-backdrop-filter:blur(28px) saturate(145%)
+}
+.hero{background:radial-gradient(circle at 88% 12%,rgba(229,31,42,.26),transparent 30%),linear-gradient(145deg,rgba(66,43,48,.69),rgba(22,21,25,.38))}
+.hero h1,.section-title h2,.topbar-title b,.detail-label,.quick-card b,.saved-deck-main b,.stat b{color:var(--sv-text)!important}
+.hero p,.quick-card small,.meta,.note,.topbar-title small,.detail-text,.saved-deck-main small,label{color:var(--sv-muted)!important}
+.searchbar,input,select,textarea{background:rgba(15,15,18,.48)!important;color:var(--sv-text)!important;border:1px solid rgba(255,255,255,.09)!important}
+input::placeholder,textarea::placeholder{color:#887b7e!important}
+.qicon,.report-row .badge,.detail-badge,.learn-upload-icon{background:linear-gradient(145deg,var(--sv-red),#a41620)!important;box-shadow:0 12px 28px rgba(230,31,42,.24)!important}
+.btn{background:linear-gradient(135deg,var(--sv-red),#b7151e)!important;color:white!important;box-shadow:0 10px 26px rgba(230,31,42,.21)!important}
+.btn.secondary{background:rgba(255,255,255,.055)!important;color:var(--sv-text)!important;border-color:rgba(255,255,255,.11)!important;box-shadow:none!important}
+.btn.danger{background:rgba(230,31,42,.10)!important;color:#ff6972!important;border-color:rgba(230,31,42,.18)!important}
+.chip,.topic-tag,.summary-chip,.flash-topic,.ai-badge{color:#ff9da3!important;background:rgba(230,31,42,.10)!important;border-color:rgba(230,31,42,.16)!important}
+.bottom-nav{background:linear-gradient(180deg,rgba(41,31,35,.78),rgba(17,17,21,.72))!important;border:1px solid rgba(255,255,255,.10)!important;box-shadow:0 20px 55px rgba(0,0,0,.42)!important;backdrop-filter:blur(30px) saturate(150%)!important;-webkit-backdrop-filter:blur(30px) saturate(150%)!important}
+.nav-btn{color:#9d9194!important;position:relative}.nav-btn.active{color:#ff5360!important}
+.nav-btn.active::after{content:"";width:18px;height:2px;border-radius:999px;background:var(--sv-red);box-shadow:0 0 14px rgba(230,31,42,.65);position:absolute;bottom:2px}
+.rating-btn.again{background:rgba(230,31,42,.12)!important;color:#ff727b!important}.rating-btn.unsure{background:rgba(214,159,74,.11)!important;color:#efc46e!important}.rating-btn.know{background:rgba(70,163,108,.12)!important;color:#78d49e!important}
+.flashcard{background:radial-gradient(circle at 80% 12%,rgba(230,31,42,.18),transparent 32%),linear-gradient(145deg,rgba(50,40,44,.86),rgba(17,17,20,.78))!important;border:1px solid rgba(255,255,255,.10)!important;box-shadow:0 28px 80px rgba(0,0,0,.42)!important}
+.flashcard-content h3{color:#fff!important}.flashcard-content small,.flashcard-top{color:#a99ca0!important}
+.modal-wrap{background:rgba(0,0,0,.42)!important}.toast{background:rgba(31,23,26,.92)!important;color:#fff!important}
+@keyframes svScreenIn{0%{opacity:0;transform:translateY(14px) scale(.992);filter:blur(4px)}100%{opacity:1;transform:none;filter:blur(0)}}
+@keyframes svNavPulse{0%{transform:scale(.86);opacity:.2}70%{transform:scale(1.35);opacity:0}100%{opacity:0}}
+@keyframes svCardReveal{0%{opacity:.15;transform:perspective(900px) rotateX(14deg) scale(.972)}100%{opacity:1;transform:perspective(900px) rotateX(0) scale(1)}}
+@keyframes svCardExit{0%{opacity:1;transform:translateX(0)}100%{opacity:0;transform:translateX(-28px) rotate(-1.5deg) scale(.98)}}
+@keyframes svCardEnter{0%{opacity:0;transform:translateX(28px) rotate(1.5deg) scale(.985)}100%{opacity:1;transform:none}}
+@keyframes svAudioBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+@keyframes svRipple{0%{transform:translate(-50%,-50%) scale(.7);opacity:.45}80%{transform:translate(-50%,-50%) scale(1.55);opacity:0}100%{opacity:0}}
+@keyframes svWave{0%,100%{transform:scaleY(.28)}50%{transform:scaleY(1)}}
+@keyframes svSuccess{0%{transform:translate(-50%,-50%) scale(.75);opacity:0}68%{transform:translate(-50%,-50%) scale(1.12);opacity:1}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+@keyframes svModalIn{0%{opacity:0;transform:translateY(18px) scale(.97);filter:blur(5px)}100%{opacity:1;transform:none;filter:blur(0)}}
+@keyframes svShimmer{0%{transform:translateX(-130%)}100%{transform:translateX(190%)}}
+.panel.sv-enter{animation:svScreenIn .42s var(--sv-ease) both}
+.modal-wrap.show .modal{animation:svModalIn .35s var(--sv-ease) both}
+.nav-btn.sv-tap::before{content:"";position:absolute;width:34px;height:34px;border-radius:50%;left:50%;top:40%;transform:translate(-50%,-50%);border:1px solid rgba(230,31,42,.42);animation:svNavPulse .55s ease-out}
+#flashcard.sv-reveal{animation:svCardReveal .38s var(--sv-ease) both}
+#flashcard.sv-exit{animation:svCardExit .18s ease-in both}
+#flashcard.sv-enter-card{animation:svCardEnter .32s var(--sv-ease) both}
+#audioBox{position:relative;overflow:hidden}
+#audioBox.recording{animation:svAudioBreathe 1.9s ease-in-out infinite}
+#audioBox.recording::before,#audioBox.recording::after{content:"";position:absolute;left:50%;top:47%;width:150px;height:150px;border-radius:50%;border:1px solid rgba(230,31,42,.34);pointer-events:none;animation:svRipple 1.75s ease-out infinite}
+#audioBox.recording::after{animation-delay:.85s}
+.sv-waveform{height:44px;display:none;align-items:center;justify-content:center;gap:4px;margin:12px 0 8px}
+#audioBox.recording .sv-waveform{display:flex}
+.sv-waveform i{width:3px;height:28px;border-radius:999px;background:linear-gradient(180deg,#ff5f69,#b91a23);transform-origin:center;animation:svWave .72s ease-in-out infinite}
+.sv-waveform i:nth-child(2){animation-delay:.08s}.sv-waveform i:nth-child(3){animation-delay:.16s}.sv-waveform i:nth-child(4){animation-delay:.24s}.sv-waveform i:nth-child(5){animation-delay:.32s}.sv-waveform i:nth-child(6){animation-delay:.40s}.sv-waveform i:nth-child(7){animation-delay:.48s}.sv-waveform i:nth-child(8){animation-delay:.56s}.sv-waveform i:nth-child(9){animation-delay:.64s}
+.sv-ai-loading{position:relative;overflow:hidden}.sv-ai-loading::after{content:"";position:absolute;inset:0;width:36%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.10),transparent);animation:svShimmer 1.5s ease-in-out infinite}
+.sv-pop-success{position:fixed;left:50%;top:48%;z-index:9999;width:70px;height:70px;border-radius:50%;display:grid;place-items:center;color:white;font-size:32px;font-weight:900;background:linear-gradient(145deg,#39a765,#1f7442);box-shadow:0 18px 45px rgba(32,117,67,.38);animation:svSuccess .5s var(--sv-spring) both;pointer-events:none}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+
+
+/* =========================================================
+   StudyVault v19 — Light Liquid Glass + Visible Motion
+   Final override layer
+   ========================================================= */
+:root{
+  --v19-bg:#f5f7f9;
+  --v19-bg-warm:#fbfaf8;
+  --v19-ink:#17202b;
+  --v19-muted:#6f7a87;
+  --v19-red:#e52535;
+  --v19-red-dark:#b91826;
+  --v19-glass:rgba(255,255,255,.60);
+  --v19-glass-strong:rgba(255,255,255,.76);
+  --v19-line:rgba(255,255,255,.84);
+  --v19-shadow:0 22px 55px rgba(48,61,77,.13),0 6px 18px rgba(48,61,77,.07);
+  --v19-ease:cubic-bezier(.22,1,.36,1);
+  --v19-spring:cubic-bezier(.18,1.28,.32,1);
+}
+
+html,body{
+  background:
+    radial-gradient(circle at 86% 8%,rgba(229,37,53,.085),transparent 26%),
+    radial-gradient(circle at 9% 70%,rgba(114,159,193,.10),transparent 28%),
+    linear-gradient(155deg,var(--v19-bg-warm) 0%,#f2f6f8 52%,#edf3f6 100%) !important;
+  color:var(--v19-ink)!important;
+}
+
+body::before{
+  content:"";
+  position:fixed;inset:0;z-index:-3;pointer-events:none;
+  background:
+    radial-gradient(ellipse at 72% 14%,rgba(255,255,255,.88),transparent 30%),
+    linear-gradient(118deg,transparent 0 46%,rgba(229,37,53,.035) 46% 47%,transparent 47%);
+}
+body::after{
+  content:"";
+  position:fixed;left:-10vw;right:-10vw;bottom:-25vh;height:55vh;z-index:-2;pointer-events:none;
+  background:linear-gradient(90deg,transparent 0 15%,rgba(112,157,188,.055) 15% 16%,transparent 16% 55%,rgba(229,37,53,.04) 55% 56%,transparent 56%);
+  transform:skewY(-6deg);
+}
+
+.glass,.glass-soft,.hero,.quick-card,.list-card,.form-card,.stats-card,.detail-card,.report-detail,.saved-deck,.modal,
+.account-card,.stat,.report-row,.learn-upload,.audio-card{
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.78),rgba(255,255,255,.43)) !important;
+  border:1px solid var(--v19-line)!important;
+  box-shadow:var(--v19-shadow),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(255,255,255,.32)!important;
+  backdrop-filter:blur(26px) saturate(150%)!important;
+  -webkit-backdrop-filter:blur(26px) saturate(150%)!important;
+}
+
+.hero{
+  background:
+    radial-gradient(circle at 88% 10%,rgba(229,37,53,.105),transparent 31%),
+    radial-gradient(circle at 10% 0%,rgba(255,255,255,.98),transparent 36%),
+    linear-gradient(145deg,rgba(255,255,255,.83),rgba(246,249,251,.55))!important;
+}
+
+.hero h1,.section-title h2,.topbar-title b,.detail-label,.quick-card b,.saved-deck-main b,.stat b,
+h1,h2,h3,strong,b{
+  color:var(--v19-ink)!important;
+}
+.hero p,.quick-card small,.meta,.note,.topbar-title small,.detail-text,.saved-deck-main small,label,
+.flashcard-top,.flashcard-content small{
+  color:var(--v19-muted)!important;
+}
+
+.searchbar,input,select,textarea{
+  background:rgba(255,255,255,.58)!important;
+  color:var(--v19-ink)!important;
+  border:1px solid rgba(107,124,142,.13)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85)!important;
+}
+input::placeholder,textarea::placeholder{color:#9aa4af!important}
+
+.qicon,.report-row .badge,.detail-badge,.learn-upload-icon{
+  background:linear-gradient(145deg,#f03a49,var(--v19-red-dark))!important;
+  box-shadow:0 11px 24px rgba(229,37,53,.20),inset 0 1px 0 rgba(255,255,255,.28)!important;
+}
+.btn{
+  background:linear-gradient(135deg,#ef3444,var(--v19-red-dark))!important;
+  color:white!important;
+  box-shadow:0 10px 23px rgba(229,37,53,.18),inset 0 1px 0 rgba(255,255,255,.24)!important;
+}
+.btn.secondary{
+  background:rgba(255,255,255,.60)!important;
+  color:var(--v19-ink)!important;
+  border:1px solid rgba(104,119,136,.12)!important;
+  box-shadow:0 6px 16px rgba(49,62,77,.06),inset 0 1px 0 white!important;
+}
+.btn.danger{
+  background:rgba(229,37,53,.07)!important;color:#c91d2c!important;border-color:rgba(229,37,53,.12)!important
+}
+.chip,.topic-tag,.summary-chip,.flash-topic,.ai-badge{
+  color:#bd1e2b!important;background:rgba(229,37,53,.07)!important;border-color:rgba(229,37,53,.10)!important
+}
+.chip.gray{color:#687481!important;background:rgba(87,104,122,.06)!important;border-color:rgba(87,104,122,.08)!important}
+
+.bottom-nav{
+  background:linear-gradient(180deg,rgba(255,255,255,.79),rgba(247,249,251,.67))!important;
+  border:1px solid rgba(255,255,255,.94)!important;
+  box-shadow:0 20px 45px rgba(53,66,80,.13),inset 0 1px 0 white!important;
+  backdrop-filter:blur(30px) saturate(160%)!important;
+  -webkit-backdrop-filter:blur(30px) saturate(160%)!important;
+}
+.nav-btn{color:#7d8995!important}.nav-btn.active{color:var(--v19-red)!important}
+.nav-btn.active::after{background:var(--v19-red)!important;box-shadow:0 0 12px rgba(229,37,53,.25)!important}
+
+.report-row,.saved-deck{background:rgba(255,255,255,.30)!important;border-color:rgba(100,118,136,.08)!important}
+.report-row:hover,.saved-deck:hover{background:rgba(255,255,255,.60)!important}
+
+.flashcard{
+  background:
+    radial-gradient(circle at 84% 8%,rgba(229,37,53,.09),transparent 30%),
+    linear-gradient(145deg,rgba(255,255,255,.92),rgba(245,248,250,.75))!important;
+  border:1px solid rgba(255,255,255,.95)!important;
+  box-shadow:0 28px 70px rgba(54,67,81,.15),inset 0 1px 0 white!important;
+}
+.flashcard-content h3{color:var(--v19-ink)!important}
+.rating-btn.again{background:rgba(229,37,53,.08)!important;color:#c92332!important;border-color:rgba(229,37,53,.11)!important}
+.rating-btn.unsure{background:rgba(205,151,53,.09)!important;color:#9b6c13!important;border-color:rgba(205,151,53,.12)!important}
+.rating-btn.know{background:rgba(51,151,92,.09)!important;color:#277d4c!important;border-color:rgba(51,151,92,.12)!important}
+.modal-wrap{background:rgba(38,49,61,.18)!important}
+.toast{background:rgba(30,39,49,.90)!important;color:#fff!important}
+
+/* Touch interaction: visible, but not gimmicky */
+.btn,.quick-card,.report-row,.saved-deck,.nav-btn,.rating-btn{
+  transition:transform .18s var(--v19-ease),box-shadow .22s ease,background-color .22s ease,filter .22s ease!important;
+  transform-origin:center;
+}
+.btn:active,.rating-btn:active{transform:scale(.955)!important}
+.quick-card:active,.report-row:active,.saved-deck:active{transform:scale(.982) translateY(1px)!important}
+.nav-btn:active{transform:scale(.90)!important}
+
+/* More visible state animations */
+@keyframes v19ScreenIn{
+  0%{opacity:0;transform:translateY(22px) scale(.985);filter:blur(7px)}
+  62%{opacity:1;transform:translateY(-2px) scale(1.002);filter:blur(0)}
+  100%{opacity:1;transform:none}
+}
+@keyframes v19StaggerIn{
+  0%{opacity:0;transform:translateY(18px) scale(.975)}
+  100%{opacity:1;transform:none}
+}
+@keyframes v19NavRing{
+  0%{transform:translate(-50%,-50%) scale(.35);opacity:.55}
+  100%{transform:translate(-50%,-50%) scale(1.6);opacity:0}
+}
+@keyframes v19FlipOut{
+  0%{opacity:1;transform:perspective(1100px) rotateY(0deg) scale(1)}
+  49%{opacity:.55;transform:perspective(1100px) rotateY(88deg) scale(.98)}
+  50%{opacity:.55;transform:perspective(1100px) rotateY(-88deg) scale(.98)}
+  100%{opacity:1;transform:perspective(1100px) rotateY(0deg) scale(1)}
+}
+@keyframes v19CardNext{
+  0%{opacity:0;transform:translateX(42px) scale(.965) rotate(1.5deg)}
+  72%{opacity:1;transform:translateX(-3px) scale(1.003)}
+  100%{opacity:1;transform:none}
+}
+@keyframes v19AudioPulse{
+  0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(229,37,53,.18)}
+  50%{transform:scale(1.055);box-shadow:0 0 0 22px rgba(229,37,53,0)}
+}
+@keyframes v19Wave{0%,100%{transform:scaleY(.18)}50%{transform:scaleY(1)}}
+@keyframes v19Success{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.55) rotate(-10deg)}
+  65%{opacity:1;transform:translate(-50%,-50%) scale(1.13) rotate(2deg)}
+  100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0)}
+}
+@keyframes v19Shimmer{0%{transform:translateX(-150%)}100%{transform:translateX(250%)}}
+
+.panel.sv-enter{animation:v19ScreenIn .48s var(--v19-ease) both!important}
+.panel.sv-enter .section-title,
+.panel.sv-enter .hero,
+.panel.sv-enter .quick-card,
+.panel.sv-enter .list-card,
+.panel.sv-enter .form-card,
+.panel.sv-enter .stats-card{
+  animation:v19StaggerIn .42s var(--v19-ease) both;
+}
+.panel.sv-enter .quick-card:nth-child(2){animation-delay:.045s}
+.panel.sv-enter .quick-card:nth-child(3){animation-delay:.09s}
+.panel.sv-enter .quick-card:nth-child(4){animation-delay:.135s}
+
+.nav-btn.sv-tap::before{
+  border:1.5px solid rgba(229,37,53,.42)!important;
+  animation:v19NavRing .58s ease-out!important
+}
+#flashcard.sv-reveal{animation:v19FlipOut .48s var(--v19-ease) both!important}
+#flashcard.sv-enter-card{animation:v19CardNext .38s var(--v19-ease) both!important}
+.sv-pop-success{animation:v19Success .52s var(--v19-spring) both!important}
+
+/* Audio is deliberately obvious while recording */
+#audioBox .mic{
+  background:
+    radial-gradient(circle at 34% 27%,rgba(255,255,255,.45),transparent 20%),
+    linear-gradient(145deg,#f24150,#ba1927)!important;
+  box-shadow:0 16px 35px rgba(229,37,53,.19),inset 0 1px 0 rgba(255,255,255,.35)!important;
+}
+#audioBox.recording .mic{animation:v19AudioPulse 1.35s ease-in-out infinite!important}
+#audioBox.recording::before,#audioBox.recording::after{border-color:rgba(229,37,53,.22)!important}
+.sv-waveform i{background:linear-gradient(180deg,#f14a58,#c31d2b)!important;animation:v19Wave .64s ease-in-out infinite!important}
+.sv-ai-loading::after{background:linear-gradient(90deg,transparent,rgba(229,37,53,.10),transparent)!important;animation:v19Shimmer 1.35s ease-in-out infinite!important}
+
+@media (hover:hover){
+  .quick-card:hover,.report-row:hover,.saved-deck:hover{transform:translateY(-4px);box-shadow:0 25px 55px rgba(48,61,77,.14)!important}
+  .btn:hover{filter:brightness(1.035);transform:translateY(-1px)}
+}
+
+
+/* StudyVault v20 — motion tuning + cleaner hero search */
+.searchbar{
+  position:relative;
+  background:rgba(255,255,255,.52)!important;
+  border:1px solid rgba(111,128,145,.10)!important;
+  box-shadow:0 8px 24px rgba(49,63,78,.045),inset 0 1px 0 rgba(255,255,255,.92)!important;
+  padding:13px 16px!important;
+}
+.searchbar input{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  background:transparent!important;
+  border:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  padding:0!important;
+  min-height:0!important;
+}
+.searchbar input:focus,.searchbar input:focus-visible{
+  border:0!important;outline:0!important;box-shadow:none!important;
+}
+.searchbar:focus-within{
+  background:rgba(255,255,255,.72)!important;
+  border-color:rgba(229,37,53,.16)!important;
+  box-shadow:0 10px 28px rgba(49,63,78,.06),0 0 0 3px rgba(229,37,53,.035),inset 0 1px 0 white!important;
+}
+
+/* Longer, more perceptible page transitions */
+@keyframes v20ScreenIn{
+  0%{opacity:0;transform:translateY(32px) scale(.975);filter:blur(9px)}
+  45%{opacity:.78;transform:translateY(8px) scale(.993);filter:blur(2px)}
+  78%{opacity:1;transform:translateY(-3px) scale(1.002);filter:blur(0)}
+  100%{opacity:1;transform:none}
+}
+@keyframes v20ChildIn{
+  0%{opacity:0;transform:translateY(22px) scale(.982)}
+  70%{opacity:1;transform:translateY(-2px) scale(1.001)}
+  100%{opacity:1;transform:none}
+}
+.panel.sv-enter{
+  animation:v20ScreenIn .82s cubic-bezier(.22,1,.36,1) both!important;
+}
+.panel.sv-enter > *{
+  animation:v20ChildIn .70s cubic-bezier(.22,1,.36,1) both;
+}
+.panel.sv-enter > *:nth-child(1){animation-delay:.05s}
+.panel.sv-enter > *:nth-child(2){animation-delay:.11s}
+.panel.sv-enter > *:nth-child(3){animation-delay:.17s}
+.panel.sv-enter > *:nth-child(4){animation-delay:.23s}
+.panel.sv-enter > *:nth-child(5){animation-delay:.29s}
+.panel.sv-enter > *:nth-child(6){animation-delay:.35s}
+
+/* Make controls feel less instantaneous */
+.btn,.quick-card,.report-row,.saved-deck,.nav-btn,.rating-btn{
+  transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .34s ease,background-color .34s ease,filter .34s ease!important;
+}
+.nav-btn.sv-tap::before{animation-duration:.82s!important}
+#flashcard.sv-reveal{animation-duration:.72s!important}
+#flashcard.sv-enter-card{animation-duration:.58s!important}
+.modal-wrap.show .modal{animation-duration:.55s!important}
+#audioBox.recording .mic{animation-duration:1.7s!important}
+.sv-waveform i{animation-duration:.82s!important}
+.sv-ai-loading::after{animation-duration:1.75s!important}
+.sv-pop-success{animation-duration:.72s!important}
+
+
+.field-hint{font-size:12px;color:var(--v19-muted);margin-top:7px;padding-left:2px}.sv-select{position:relative;width:100%}.sv-select-trigger{width:100%;min-height:48px;padding:0 15px;border-radius:15px;border:1px solid rgba(107,124,142,.13);background:rgba(255,255,255,.58);box-shadow:inset 0 1px 0 rgba(255,255,255,.88);color:var(--v19-ink);font:inherit;font-weight:650;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:transform .28s var(--v19-ease),background .3s ease,box-shadow .3s ease,border-color .3s ease}.sv-select-trigger:active{transform:scale(.985)}.sv-select.open .sv-select-trigger{background:rgba(255,255,255,.84);border-color:rgba(229,37,53,.15);box-shadow:0 12px 28px rgba(49,63,78,.07),0 0 0 3px rgba(229,37,53,.035),inset 0 1px 0 white}.sv-select-chevron{font-size:20px;color:#7e8994;transition:transform .48s var(--v19-ease)}.sv-select.open .sv-select-chevron{transform:rotate(180deg)}.sv-select-menu{position:absolute;left:0;right:0;top:calc(100% + 8px);z-index:180;max-height:0;opacity:0;overflow:hidden;pointer-events:none;border-radius:20px;border:1px solid rgba(255,255,255,.92);background:linear-gradient(145deg,rgba(255,255,255,.95),rgba(246,249,251,.88));backdrop-filter:blur(28px) saturate(155%);-webkit-backdrop-filter:blur(28px) saturate(155%);box-shadow:0 24px 55px rgba(49,63,78,.15),inset 0 1px 0 white;transform:translateY(-12px) scale(.98);transform-origin:top;transition:max-height .72s var(--v19-ease),opacity .38s ease,transform .72s var(--v19-ease),padding .42s var(--v19-ease)}.sv-select.open .sv-select-menu{max-height:390px;opacity:1;pointer-events:auto;transform:none;padding:8px;overflow-y:auto}.sv-semester-label{padding:11px 11px 6px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#9a7479}.sv-option{width:100%;border:0;background:transparent;color:var(--v19-ink);font:inherit;text-align:left;padding:11px 12px;border-radius:13px;display:flex;align-items:center;justify-content:space-between;transition:background .24s ease,transform .24s var(--v19-ease)}.sv-option:hover,.sv-option:focus-visible{background:rgba(229,37,53,.055);outline:0}.sv-option:active{transform:scale(.985)}.sv-option.selected{background:rgba(229,37,53,.075);color:#bc1e2b;font-weight:750}.sv-option.selected::after{content:"✓";font-weight:900;color:var(--v19-red)}.sv-search-filter-wrap{margin-top:9px}.sv-search-select .sv-select-trigger{min-height:42px;font-size:13px;background:rgba(255,255,255,.42)}@keyframes svOptionIn{0%{opacity:0;transform:translateY(-8px)}100%{opacity:1;transform:none}}.sv-select.open .sv-option{animation:svOptionIn .44s var(--v19-ease) both}
+
+/* v22 — dropdown layering, semester dependency, search spacing */
+.hero:has(.sv-select.open),.form-card:has(.sv-select.open),.glass:has(.sv-select.open){
+  overflow:visible!important;position:relative!important;z-index:90!important
+}
+.sv-select.open{z-index:240!important}
+.sv-select.open .sv-select-menu{z-index:9999!important}
+#home .hero{overflow:visible!important}
+#reports .form-card{overflow:visible!important}
+#reportsList{margin-top:14px!important}
+#reports .form-card + .list-card{margin-top:14px!important}
+.sv-search-filter-wrap{position:relative;z-index:15}
+.sv-semester-label:not(:first-child){margin-top:6px;padding-top:13px;border-top:1px solid rgba(104,119,136,.10)}
+.sv-select-trigger:disabled{opacity:.55;cursor:not-allowed}
+
+/* v23 — exact spacing fix for reports screen */
+#reports .filter-card{
+  margin-bottom:18px!important;
+}
+#reportList{
+  margin-top:0!important;
+  display:grid!important;
+  gap:14px!important;
+}
+#reportList > .report-detail{
+  margin-top:0!important;
+}
+
+
+/* v24 — clean audio recorder */
+#audioBox{background:transparent!important;box-shadow:none!important;border:0!important}
+.sv-recorder-visual{
+  width:min(330px,82%);height:108px;margin:26px auto 18px;padding:0 20px;
+  border-radius:28px;display:flex;align-items:center;justify-content:center;gap:20px;
+  background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(249,250,252,.55));
+  border:1px solid rgba(255,255,255,.94);
+  box-shadow:0 18px 42px rgba(52,65,80,.10),inset 0 1px 0 #fff;
+  backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);
+  transition:transform .5s var(--v19-ease),box-shadow .5s ease,border-color .5s ease
+}
+.sv-mic-core{
+  width:52px;height:52px;border-radius:18px;display:grid;place-items:center;flex:0 0 auto;
+  background:rgba(229,37,53,.085);border:1px solid rgba(229,37,53,.11);
+  transition:transform .5s var(--v19-ease),background .4s ease
+}
+.sv-mic-core span{position:relative;width:14px;height:24px;border:3px solid #d92736;border-radius:10px}
+.sv-mic-core span::before{
+  content:"";position:absolute;left:50%;bottom:-9px;width:22px;height:13px;transform:translateX(-50%);
+  border:3px solid #d92736;border-top:0;border-radius:0 0 13px 13px
+}
+.sv-mic-core span::after{content:"";position:absolute;width:3px;height:7px;background:#d92736;left:50%;bottom:-15px;transform:translateX(-50%);border-radius:3px}
+.sv-live-waveform{height:48px;display:flex;align-items:center;gap:5px;flex:1;max-width:180px}
+.sv-live-waveform i{display:block;width:4px;height:32px;border-radius:99px;background:#d6dce2;transform:scaleY(.18);transform-origin:center;transition:background .35s ease}
+#audioBox.recording .sv-recorder-visual{
+  transform:scale(1.025);border-color:rgba(229,37,53,.13);
+  box-shadow:0 22px 50px rgba(52,65,80,.12),0 0 0 6px rgba(229,37,53,.025),inset 0 1px 0 #fff
+}
+#audioBox.recording .sv-mic-core{background:rgba(229,37,53,.12);transform:scale(1.04)}
+#audioBox.recording .sv-live-waveform i{background:linear-gradient(180deg,#ef4452,#c61d2b);animation:v24Wave 1.05s ease-in-out infinite}
+#audioBox.recording .sv-live-waveform i:nth-child(2){animation-delay:.09s}
+#audioBox.recording .sv-live-waveform i:nth-child(3){animation-delay:.18s}
+#audioBox.recording .sv-live-waveform i:nth-child(4){animation-delay:.27s}
+#audioBox.recording .sv-live-waveform i:nth-child(5){animation-delay:.36s}
+#audioBox.recording .sv-live-waveform i:nth-child(6){animation-delay:.45s}
+#audioBox.recording .sv-live-waveform i:nth-child(7){animation-delay:.54s}
+#audioBox.recording .sv-live-waveform i:nth-child(8){animation-delay:.63s}
+#audioBox.recording .sv-live-waveform i:nth-child(9){animation-delay:.72s}
+@keyframes v24Wave{
+  0%,100%{transform:scaleY(.18);opacity:.55}
+  45%{transform:scaleY(1);opacity:1}
+}
+#audioBox.recording::before,#audioBox.recording::after{display:none!important}
+#audioBox.recording{animation:none!important}
+#audioTimer{font-size:46px!important;color:#17395a!important;font-variant-numeric:tabular-nums;letter-spacing:-.035em}
+#audioStatus{max-width:520px;margin-left:auto!important;margin-right:auto!important;color:#768493!important}
+
+/* v25 — Safari live speech transcription */
+.live-speech-status{
+  margin:4px auto 14px;
+  width:max-content;max-width:90%;
+  padding:7px 11px;border-radius:999px;
+  font-size:12px;font-weight:700;color:#7b8794;
+  background:rgba(255,255,255,.52);
+  border:1px solid rgba(111,128,145,.09);
+  transition:background .35s ease,color .35s ease,transform .35s var(--v19-ease)
+}
+#audioBox.recording .live-speech-status{
+  color:#b91d2a;background:rgba(229,37,53,.065);transform:translateY(-1px)
+}
+.live-speech-status.ok{color:#28794c;background:rgba(48,153,92,.075)}
+.live-speech-status.warn{color:#8e6716;background:rgba(207,157,53,.085)}
+
+/* v26 — recorder controls must always stay tappable */
+#recordBtn{position:relative;z-index:30;touch-action:manipulation}
+#audioBox.recording #recordBtn{
+  background:linear-gradient(135deg,#26313d,#111820)!important;
+  box-shadow:0 10px 24px rgba(31,42,53,.16)!important;
+}
+#audioBox.recording #recordBtn::before{
+  content:"";width:9px;height:9px;border-radius:2px;background:white;display:inline-block;margin-right:8px
+}
+
+/* v27 — stable recorder */
+.live-speech-status{display:none!important}
+.audio-local-status{
+  width:max-content;max-width:90%;margin:5px auto 16px;padding:7px 11px;
+  border-radius:999px;font-size:11px;font-weight:700;color:#7c8792;
+  background:rgba(255,255,255,.48);border:1px solid rgba(111,128,145,.08)
+}
+#recordBtn,#finishRecordingBtn{touch-action:manipulation;position:relative;z-index:20}
+#audioBox.recording #recordBtn{
+  background:linear-gradient(135deg,#26313d,#111820)!important;
+  box-shadow:0 10px 24px rgba(31,42,53,.16)!important
+}
+#audioBox.recording #recordBtn::before{
+  content:"";width:9px;height:9px;border-radius:2px;background:white;
+  display:inline-block;margin-right:8px
+}
+</style>
+
+
+
+<link rel="manifest" href="./manifest.json?v=6">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon-v2.png?v=6">
+<link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32-v2.png?v=6">
+<meta name="apple-mobile-web-app-title" content="StudyVault">
+<meta name="application-name" content="StudyVault">
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js">
+$('closeExamSummary')?.addEventListener('click',()=>$('examSummaryModal').classList.remove('show'));
+$('examSummaryModal')?.addEventListener('click',e=>{
+  if(e.target===$('examSummaryModal'))$('examSummaryModal').classList.remove('show');
+});
+</script>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+
+<main class="app">
+  <section id="home" class="panel active">
+    <div class="hero glass">
+      <div class="eyebrow">STUDYVAULT</div>
+      <h1 id="homeGreeting">Willkommen bei<br>StudyVault.</h1>
+      <p id="homeSubline">Prüfungswissen teilen, eigene Unterlagen lernen und alles an einem Ort behalten.</p>
+      <div class="searchbar">
+        <span>⌕</span><input id="globalSearch" placeholder="Prüfung, Fach oder Prüfer suchen…">
+      </div><div class="sv-search-filter-wrap"><div class="sv-select sv-search-select" id="searchSubjectSelect"><button type="button" class="sv-select-trigger" id="searchSubjectTrigger" aria-expanded="false"><span id="searchSubjectTriggerText">Direkt nach Fach filtern</span><span class="sv-select-chevron">⌄</span></button><div class="sv-select-menu" id="searchSubjectMenu" role="listbox"></div></div></div>
+    </div>
+
+    <div class="section-title"><h2>Schnellzugriff</h2><button class="link" data-action="tab" data-target="reports">Alle anzeigen</button></div>
+    <div class="quick-grid">
+      <button class="quick-card glass" data-action="tab" data-target="new"><div class="qicon">＋</div><b>Neuen Bericht erstellen</b><small>Teile deine Prüfungserfahrung strukturiert mit anderen.</small></button>
+      <button class="quick-card glass" data-action="tab" data-target="reports"><div class="qicon green">⌕</div><b>Fächer & Prüfungen</b><small>Durchsuche Berichte nach Fach, Semester und Prüfer.</small></button>
+      <button class="quick-card glass" data-action="audio-open"><div class="qicon purple">◉</div><b>Audio-Notiz</b><small>Halte deine Erinnerung direkt nach der Prüfung fest.</small></button>
+    </div>
+
+    <div class="section-title"><h2>Zuletzt angesehen</h2><button class="link" data-action="tab" data-target="reports">Alle anzeigen</button></div>
+    <div id="recentList" class="list-card glass"></div>
+  </section>
+
+  <section id="reports" class="panel">
+    <div class="section-title"><h2>Fächer & Prüfungen</h2><button class="link" id="resetFilters">Zurücksetzen</button></div>
+    <div class="filter-card glass">
+      <div><label>Semester</label><select id="fSemester"><option value="">Alle</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
+      <div><label>Fach</label><input id="fFach" placeholder="z. B. Statistik"></div>
+      <div><label>Prüfer</label><input id="fPruefer" placeholder="z. B. Müller"></div>
+      <button class="btn" id="applyFilters">Filtern</button>
+    </div>
+    <div id="reportList"></div>
+  </section>
+
+  <section id="new" class="panel">
+    <div class="section-title"><h2>Neuer Bericht</h2><span class="link">Erfassen</span></div>
+    <form id="reportForm" class="form-card glass">
+      <div class="form-grid">
+        <div class="field"><label>Semester *</label><select id="semester" required><option value="">Bitte wählen</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
+        <div class="field"><label>Jahr *</label><input id="jahr" type="number" min="2020" max="2100" required></div>
+        <div class="field"><label>Fach / Prüfung *</label><div class="sv-select" id="subjectSelect"><button type="button" class="sv-select-trigger" id="subjectTrigger" aria-expanded="false"><span id="subjectTriggerText">Fach auswählen</span><span class="sv-select-chevron">⌄</span></button><div class="sv-select-menu" id="subjectMenu" role="listbox"></div><input id="fach" type="hidden" required></div></div>
+        <div class="field"><label>Prüfer / Dozent</label><input id="pruefer" placeholder="z. B. Prof. Müller, Prof. Schmidt, Prof. Weber"><div class="field-hint">Mehrere Lehrende einfach mit Komma trennen.</div></div>
+        <div class="field"><label>Schwierigkeit</label><select id="schwierigkeit"><option>Leicht</option><option selected>Mittel</option><option>Schwer</option></select></div>
+        <div class="field"><label>Prüfungsform</label><select id="form"><option>Klausur</option><option>Mündlich</option><option>Präsentation</option><option>Hausarbeit</option><option>Sonstiges</option></select></div>
+      </div>
+      <div class="field"><label>Themen / Aufgaben *</label><textarea id="themen" required placeholder="Welche Themen und Aufgabentypen kamen konkret dran?"></textarea></div>
+      <div class="field"><label>Eigene Tipps & Erfahrungen</label><textarea id="tipps" placeholder="Was war wichtig, überraschend oder besonders hilfreich?"></textarea></div>
+      <div class="actions"><button class="btn" type="submit">Bericht speichern</button><button class="btn secondary" type="reset">Leeren</button><button class="btn secondary" type="button" data-action="audio-open">Audio aufnehmen</button></div>
+    </form>
+  </section>
+
+  <section id="profile" class="panel">
+    <div class="profile-identity glass">
+      <div class="avatar" id="profileAvatar">S</div>
+      <div class="profile-main"><small>StudyVault Account</small><h2 id="profileName">Student</h2><span id="profileRecoveryHint">Recovery-Code sicher aufbewahren</span></div>
+      <button class="btn secondary" id="showRecoveryBtn" type="button">Recovery</button>
+    </div>
+    <div class="section-title"><h2>Übersicht</h2><span class="link" id="syncStatus">Cloud-Speicher aktiv</span></div>
+    <div class="stats-card glass"><div class="stats-grid">
+      <div class="stat"><small>Berichte</small><b id="statBerichte">0</b></div>
+      <div class="stat"><small>Lernsets</small><b id="statDecks">0</b></div>
+      <div class="stat"><small>Karten gelernt</small><b id="statLearnedCards">0</b></div>
+    </div></div>
+    <div class="section-title"><h2>Meine Berichte</h2><span class="link">Von dir veröffentlicht</span></div>
+    <div id="myReportsList" class="list-card glass"></div>
+    <div class="section-title"><h2>Favoriten</h2><button class="link" data-action="refresh-favorites">Aktualisieren</button></div>
+    <div id="favoriteList" class="list-card glass"></div>
+    <div class="section-title"><h2>Einstellungen & Datenschutz</h2><span class="link">Account</span></div>
+    <div class="form-card glass">
+      <div class="actions"><button class="btn secondary" id="exportBtn" type="button">Daten exportieren</button><button class="btn danger" id="deleteBtn" type="button">Account wechseln</button>
+          <button class="btn danger" id="deleteAccountBtn" type="button">Account endgültig löschen</button></div>
+      <p class="note">Öffentliche Prüfungsberichte werden gemeinsam gespeichert. Lernkarten und Lernfortschritt gehören nur zu deinem Account.</p>
+    </div>
+  </section>
+
+  <section id="detail" class="panel">
+    <div class="topbar">
+      <button class="back" data-action="back">‹</button>
+      <div class="topbar-title"><b>Bericht Details</b><small id="detailSubtitle">Prüfungsbericht</small></div>
+      <button class="iconbtn" data-action="share">↗</button>
+    </div>
+    <div id="detailContent"></div>
+  </section>
+
+<section id="learn" class="panel">
+  <div class="section-title">
+    <h2>Lernkarten aus Dokumenten</h2>
+    <span class="link" id="learnApiStatus">KI wird geprüft…</span>
+  </div>
+
+  <div class="form-card glass">
+    <div class="learn-upload glass-soft" id="learnUpload">
+      <div class="learn-upload-icon">⇧</div>
+      <div>
+        <b>PDF oder Text-Skript hochladen</b>
+        <small>Dein Dokument bleibt Grundlage für alle Lernkarten.</small>
+      </div>
+      <input id="learnFile" type="file" accept=".pdf,.txt,.md" hidden>
+      <button class="btn secondary" type="button" id="chooseLearnFile">Datei wählen</button>
+    </div>
+
+    <div id="learnFileInfo" class="learn-file-info" style="display:none"></div>
+
+    <div class="form-grid" style="margin-top:14px">
+      <div class="field">
+        <label>Schwierigkeitsgrad</label>
+        <select id="learnDifficulty">
+          <option value="leicht">Leicht</option>
+          <option value="mittel" selected>Mittel</option>
+          <option value="schwer">Schwer</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Umfang</label>
+        <select id="learnScope">
+          <option value="kurz">Kurz · ca. 15 Karten</option>
+          <option value="normal" selected>Normal · ca. 30 Karten</option>
+          <option value="ausfuehrlich">Ausführlich · ca. 50 Karten</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Fragetyp</label>
+        <select id="learnFocus">
+          <option value="gemischt" selected>Gemischt</option>
+          <option value="begriffe">Begriffe & Definitionen</option>
+          <option value="verstaendnis">Verständnis</option>
+          <option value="pruefung">Prüfungsfokus</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Sprache</label>
+        <select id="learnLanguage">
+          <option>Deutsch</option>
+          <option>Englisch</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" type="button" id="generateCardsBtn" disabled>Lernkarten erstellen</button>
+      <button class="btn secondary" type="button" id="resetLearnBtn">Zurücksetzen</button>
+    </div>
+  </div>
+
+  <div id="learnProgress" class="learn-progress glass" style="display:none">
+    <div class="learn-progress-ring"><span id="learnProgressPct">0%</span></div>
+    <div>
+      <b id="learnProgressTitle">Dokument wird analysiert…</b>
+      <small id="learnProgressText">Inhalte erkennen und strukturieren</small>
+    </div>
+  </div>
+
+  <div id="deckArea" style="display:none">
+    <div class="section-title">
+      <h2 id="deckTitle">Dein Lernkartenset</h2>
+      <span id="deckMeta" class="link"></span>
+    </div>
+
+    <div class="deck-summary glass">
+      <div class="deck-stat"><small>Karten</small><b id="deckCount">0</b></div>
+      <div class="deck-stat"><small>Schwierigkeit</small><b id="deckDifficulty">Mittel</b></div>
+      <div class="deck-stat"><small>Fortschritt</small><b id="deckProgress">0%</b></div>
+    </div>
+
+    <div class="flashcard-wrap">
+      <div class="flashcard glass" id="flashcard">
+        <div class="flashcard-top">
+          <span id="cardCounter">1 / 1</span>
+          <span id="cardTopic" class="flash-topic">Thema</span>
+        </div>
+        <div class="flashcard-content">
+          <div id="cardSource" class="card-source" style="display:none"></div>
+          <small id="cardSideLabel">Frage</small>
+          <h3 id="cardText">Frage</h3>
+        </div>
+        <button class="btn secondary flash-flip" id="flipCardBtn">Antwort anzeigen</button>
+      </div>
+    </div>
+
+    <div class="learn-rating">
+      <button class="rating-btn again" data-rating="again">Nochmal</button>
+      <button class="rating-btn unsure" data-rating="unsure">Unsicher</button>
+      <button class="rating-btn know" data-rating="know">Kann ich</button>
+    </div>
+  </div>
+
+  <div class="section-title saved-decks-title" style="display:none" id="savedDecksTitle">
+    <h2>Gespeicherte Decks</h2>
+    <button class="link" type="button" id="clearDecksBtn">Alle löschen</button>
+  </div>
+  <div id="savedDecks" class="saved-decks"></div>
+</section>
+
+</main>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-tab="home"><span>⌂</span>Home</button>
+  <button class="nav-btn" data-tab="reports"><span>⌕</span>Suchen</button>
+  <button class="nav-btn" data-tab="new"><span class="nav-circle">＋</span>Neu</button>
+  
+  <button class="nav-btn" data-tab="learn"><span>▤</span>Lernen</button>
+
+  <button class="nav-btn" data-tab="profile"><span>♡</span>Profil</button>
+</nav>
+
+
+<div id="audioModal" class="modal-wrap" data-action="audio-backdrop">
+  <div class="modal glass">
+    <div class="topbar">
+      <button class="back" data-action="audio-close">‹</button>
+      <div class="topbar-title"><b>Audio-Bericht</b><small>Aus Sprache wird ein sauberer Prüfungsbericht</small></div>
+      <div style="width:40px"></div>
+    </div>
+
+    <div class="audio-steps">
+      <div class="audio-step active" id="stepRecord"><span>1</span><small>Aufnehmen</small></div>
+      <div class="audio-step" id="stepTranscript"><span>2</span><small>Transkript</small></div>
+      <div class="audio-step" id="stepSummary"><span>3</span><small>Zusammenfassung</small></div>
+    </div>
+
+    <section id="audioRecordView" class="audio-view active">
+      <div id="audioBox" class="audio-box">
+        <div class="sv-recorder-visual" aria-hidden="true">
+  <div class="sv-mic-core"><span></span></div>
+  <div class="sv-live-waveform"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+</div>
+        <div class="timer" id="audioTimer">00:00</div><div class="audio-local-status">Aufnahme bleibt auf diesem Gerät, bis du „Weiter“ tippst.</div>
+        <p id="audioStatus">Sprich einfach frei drauflos. Pausen, Füllwörter und Wiederholungen sind völlig okay.</p>
+        <div class="audio-hint glass-soft">
+          <b>Du kannst z. B. erzählen:</b>
+          <span>Was kam dran?</span>
+          <span>Welche Aufgaben waren wichtig?</span>
+          <span>Was war schwierig?</span>
+          <span>Was würdest du anderen empfehlen?</span>
+        </div>
+        <div class="actions" style="justify-content:center">
+          <button class="btn" id="recordBtn">Aufnahme starten</button>
+          <button class="btn secondary" id="finishRecordingBtn" disabled>Weiter</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="audioTranscriptView" class="audio-view">
+      <div class="ai-card glass-soft">
+        <div class="ai-card-head">
+          <div><b>Transkript</b><small>Rohfassung aus der Aufnahme</small></div>
+          <span class="ai-badge">Audio → Text</span>
+        </div>
+        <textarea id="audioTranscript" class="transcript-area"></textarea>
+      </div>
+      <div class="actions">
+        <button class="btn secondary" id="backToRecordBtn">Zurück</button>
+        <button class="btn" id="analyzeAudioBtn">Wichtige Infos herausziehen</button>
+      </div>
+    </section>
+
+    <section id="audioSummaryView" class="audio-view">
+      <div class="ai-card glass-soft">
+        <div class="ai-card-head">
+          <div><b>KI-Zusammenfassung</b><small>Bereinigt und strukturiert</small></div>
+          <span class="ai-badge success">Bereit</span>
+        </div>
+
+        <div class="summary-section">
+          <label>Themen</label>
+          <div id="sumTopics" class="summary-chips"></div>
+        </div>
+
+        <div class="summary-section">
+          <label>Aufgaben</label>
+          <ul id="sumTasks" class="summary-list"></ul>
+        </div>
+
+        <div class="summary-section">
+          <label>Schwierigkeit & Besonderheiten</label>
+          <ul id="sumDifficulty" class="summary-list"></ul>
+        </div>
+
+        <div class="summary-section">
+          <label>Tipps für andere</label>
+          <ul id="sumTips" class="summary-list"></ul>
+        </div>
+
+        <div class="summary-section">
+          <label>Vorschau Berichtstext</label>
+          <textarea id="generatedReportText" class="transcript-area"></textarea>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn secondary" id="backToTranscriptBtn">Zurück</button>
+        <button class="btn" id="useSummaryBtn">In Bericht übernehmen</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div id="accountGate" class="account-gate">
+  <div class="account-card glass">
+    <div class="account-logo"><span>S</span></div>
+    <div class="eyebrow">STUDYVAULT</div>
+    <h1>Dein persönlicher<br>StudyVault.</h1>
+    <p>Kein E-Mail-Konto, kein Passwort. Dein Name reicht. StudyVault erstellt im Hintergrund eine eindeutige ID für deine privaten Lernkarten.</p>
+    <div id="createAccountView">
+      <label>Wie heißt du?</label>
+      <input id="accountNameInput" maxlength="40" placeholder="z. B. Hannes">
+      <button class="btn account-primary" id="createAccountBtn" type="button">Loslegen</button>
+      <button class="link account-link" id="openRecoverBtn" type="button">Ich habe schon einen Recovery-Code</button>
+    </div>
+    <div id="recoverAccountView" style="display:none">
+      <label>Recovery-Code</label>
+      <input id="recoveryInput" maxlength="20" autocomplete="off" placeholder="SV-XXXX-XXXX">
+      <button class="btn account-primary" id="recoverAccountBtn" type="button">Account wiederherstellen</button>
+      <button class="link account-link" id="backCreateBtn" type="button">Zurück</button>
+    </div>
+    <div id="accountGateError" class="account-error" style="display:none"></div>
+  </div>
+</div>
+<div id="recoveryModal" class="modal-wrap">
+  <div class="modal glass recovery-card">
+    <div class="topbar"><button class="back" id="closeRecoveryBtn">‹</button><div class="topbar-title"><b>Recovery-Code</b><small>Für ein neues Gerät</small></div><div style="width:40px"></div></div>
+    <p>Mit diesem Code kannst du deinen Account auf einem anderen Gerät wiederherstellen. Teile ihn nicht öffentlich.</p>
+    <div class="recovery-code" id="recoveryCodeText">—</div>
+    <button class="btn" id="copyRecoveryBtn" type="button">Code kopieren</button>
+  </div>
+</div>
+
+
+<div id="examSummaryModal" class="modal-wrap">
+  <div class="modal glass">
+    <div class="topbar">
+      <button class="back" id="closeExamSummary">‹</button>
+      <div class="topbar-title">
+        <b>Prüfungszusammenfassung</b>
+        <small id="examSummarySubtitle">Aus veröffentlichten Berichten</small>
+      </div>
+      <div style="width:40px"></div>
+    </div>
+
+    <div id="examSummaryLoading" class="exam-summary-loading">
+      <div class="summary-spinner"></div>
+      <b>Berichte werden zusammengefasst…</b>
+      <small>Wiederkehrende Themen, Aufgaben und Tipps werden erkannt.</small>
+    </div>
+
+    <div id="examSummaryContent" style="display:none">
+      <div class="exam-summary-hero glass-soft">
+        <div>
+          <span class="ai-badge success">KI-Zusammenfassung</span>
+          <h3 id="examSummaryTitle">Prüfung</h3>
+          <p id="examSummaryOverview"></p>
+        </div>
+        <div class="exam-summary-count">
+          <b id="examSummaryReportCount">0</b>
+          <small>Berichte</small>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-box glass-soft">
+          <label>Häufig genannte Themen</label>
+          <div id="examFrequentTopics" class="summary-chips"></div>
+        </div>
+        <div class="summary-box glass-soft">
+          <label>Typische Aufgaben</label>
+          <ul id="examTypicalTasks" class="summary-list"></ul>
+        </div>
+        <div class="summary-box glass-soft">
+          <label>Schwierigkeit</label>
+          <p id="examDifficulty"></p>
+        </div>
+        <div class="summary-box glass-soft">
+          <label>Wiederkehrende Muster</label>
+          <ul id="examPatterns" class="summary-list"></ul>
+        </div>
+        <div class="summary-box glass-soft">
+          <label>Tipps aus den Berichten</label>
+          <ul id="examTips" class="summary-list"></ul>
+        </div>
+        <div class="summary-box glass-soft">
+          <label>Entwicklung über die Jahre</label>
+          <ul id="examTrends" class="summary-list"></ul>
+        </div>
+      </div>
+
+      <div class="summary-footer">
+        <span id="examSummaryYears"></span>
+        <span id="examSummaryConfidence"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div id="deleteAccountModal" class="modal-wrap">
+  <div class="modal glass">
+    <div class="topbar">
+      <button class="back" id="closeDeleteAccount">‹</button>
+      <div class="topbar-title">
+        <b>Account löschen</b>
+        <small>Dieser Schritt kann nicht rückgängig gemacht werden</small>
+      </div>
+      <div style="width:40px"></div>
+    </div>
+
+    <div class="form-card glass-soft" style="margin-top:8px">
+      <h3 style="margin-top:0">Wirklich alles löschen?</h3>
+      <p class="note">
+        Dein Account, Recovery-Code, private Lernsets, Lernfortschritt, Favoriten und alle von dir veröffentlichten Prüfungsberichte werden dauerhaft entfernt.
+      </p>
+      <label>Zur Bestätigung deinen Namen eingeben</label>
+      <input id="deleteAccountName" placeholder="Dein Account-Name">
+      <div id="deleteAccountError" class="learn-error" style="display:none"></div>
+      <div class="actions" style="margin-top:14px">
+        <button class="btn secondary" id="cancelDeleteAccount" type="button">Abbrechen</button>
+        <button class="btn danger" id="confirmDeleteAccount" type="button">Endgültig löschen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+window.SVMotion={
+  screen(panel){if(!panel)return;panel.classList.remove('sv-enter');void panel.offsetWidth;panel.classList.add('sv-enter')},
+  nav(btn){if(!btn)return;btn.classList.remove('sv-tap');void btn.offsetWidth;btn.classList.add('sv-tap');setTimeout(()=>btn.classList.remove('sv-tap'),600)},
+  cardReveal(card){if(!card)return;card.classList.remove('sv-reveal');void card.offsetWidth;card.classList.add('sv-reveal')},
+  async cardNext(card,renderFn){if(!card){renderFn();return}card.classList.add('sv-exit');await new Promise(r=>setTimeout(r,170));card.classList.remove('sv-exit');renderFn();card.classList.add('sv-enter-card');setTimeout(()=>card.classList.remove('sv-enter-card'),360)},
+  success(){const el=document.createElement('div');el.className='sv-pop-success';el.textContent='✓';document.body.appendChild(el);setTimeout(()=>el.remove(),650);try{navigator.vibrate?.([14,28,18])}catch{}}
+};
+document.addEventListener('click',e=>{const nav=e.target.closest('.nav-btn');if(nav)window.SVMotion.nav(nav)},{passive:true});
+</script>
+<script>
+window.addEventListener('error',function(e){
+  console.error('StudyVault runtime error:',e.error||e.message);
+  const gate=document.getElementById('accountGateError');
+  const accountGate=document.getElementById('accountGate');
+  if(gate && accountGate && !accountGate.classList.contains('hidden')){
+    gate.textContent='StudyVault konnte nicht vollständig gestartet werden. Bitte lade die Seite neu. Falls der Fehler bleibt, wurde die App-Version nicht korrekt aktualisiert.';
+    gate.style.display='block';
+  }
+});
+</script>
+<script>
+const $=id=>document.getElementById(id);
+const esc=(s="")=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+let sessionToken=localStorage.getItem('sv_session')||'';
+let currentUser=null;
+let recoveryCode=localStorage.getItem('sv_recovery')||'';
+let reports=[];
+let favorites=[];
+let helpfulReports=[];
+let serverDecks=[];
+let currentId=null;
+let editingReportId=null;
+let progressSyncChain=Promise.resolve();
+let previousTab='reports';
+let mediaRecorder=null,audioChunks=[],audioBlob=null,audioTimer=null,audioSeconds=0;
+
+function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),1800)}
+function authHeaders(extra={}){return {...extra,...(sessionToken?{'Authorization':'Bearer '+sessionToken}:{})}}
+async function api(url,opts={}){const r=await fetch(url,{...opts,headers:authHeaders(opts.headers||{})});let j={};try{j=await r.json()}catch{};if(!r.ok)throw new Error(j.error||'Aktion fehlgeschlagen.');return j}
+
+function switchTab(tab){
+  document.querySelectorAll('.panel').forEach(p=>{p.classList.remove('active','sv-enter')});
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const panel=$(tab);
+  panel?.classList.add('active');
+  document.querySelector(`.nav-btn[data-tab="${tab}"]`)?.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(tab==='profile')renderFavorites();
+  if(panel){
+    requestAnimationFrame(()=>{
+      panel.classList.remove('sv-enter');
+      void panel.offsetWidth;
+      window.SVMotion?.screen(panel);
+    });
+  }
+}
+window.switchTab=switchTab;
+document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
+
+async function initAccount(){
+  if(!sessionToken){$('accountGate').classList.remove('hidden');return}
+  try{
+    const j=await api('/api/account?action=me');
+    currentUser=j.user;
+    applyUser();
+    $('accountGate').classList.add('hidden');
+    await Promise.all([loadReports(),loadFavorites(),loadServerDecks()]);
+    await migrateLocalDecksOnce();
+    updateProfileStats();
+  }catch{
+    localStorage.removeItem('sv_session');
+    sessionToken='';
+    $('accountGate').classList.remove('hidden')
+  }
+  requestAnimationFrame(()=>window.SVMotion?.screen(document.getElementById(tab)));
+}
+function applyUser(){
+  if(!currentUser)return;
+  const name=currentUser.name||'Student';
+  const h=new Date().getHours();
+  const greeting=(h>=4 && h<10)?'Guten Morgen':(h>=10 && h<18)?'Hallo':'Guten Abend';
+  $('homeGreeting').innerHTML=`${greeting}, ${esc(name)} 👋<br><span style="font-size:.58em;font-weight:650;letter-spacing:-.02em">Schön, dass du da bist.</span>`;
+  $('profileName').textContent=name;
+  $('profileAvatar').textContent=(name[0]||'S').toUpperCase();
+  $('recoveryCodeText').textContent=recoveryCode||'Auf diesem Gerät nicht gespeichert';
+}
+$('createAccountBtn').addEventListener('click',async()=>{
+  const btn=$('createAccountBtn');
+  const name=$('accountNameInput').value.trim();
+  if(name.length<2)return accountError('Bitte gib mindestens 2 Zeichen ein.');
+  accountError('');
+  btn.disabled=true;
+  btn.textContent='Account wird erstellt…';
+  try{const j=await api('/api/account?action=create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name})});sessionToken=j.sessionToken;currentUser=j.user;recoveryCode=j.recoveryCode;localStorage.setItem('sv_session',sessionToken);localStorage.setItem('sv_recovery',recoveryCode);applyUser();$('accountGate').classList.add('hidden');await Promise.all([loadReports(),loadFavorites(),loadServerDecks()]);await migrateLocalDecksOnce();updateProfileStats();$('recoveryModal').classList.add('show')
+  }catch(e){
+    accountError(e.message||'Account konnte nicht erstellt werden.');
+  }finally{
+    btn.disabled=false;
+    btn.textContent='Loslegen';
+  }
+});
+$('openRecoverBtn').addEventListener('click',()=>{$('createAccountView').style.display='none';$('recoverAccountView').style.display='block'});$('backCreateBtn').addEventListener('click',()=>{$('recoverAccountView').style.display='none';$('createAccountView').style.display='block'});
+$('recoverAccountBtn').addEventListener('click',async()=>{const code=$('recoveryInput').value.trim().toUpperCase();try{const j=await api('/api/account?action=recover',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({recoveryCode:code})});sessionToken=j.sessionToken;currentUser=j.user;recoveryCode=code;localStorage.setItem('sv_session',sessionToken);localStorage.setItem('sv_recovery',code);applyUser();$('accountGate').classList.add('hidden');await Promise.all([loadReports(),loadFavorites(),loadServerDecks()]);await migrateLocalDecksOnce();updateProfileStats()}catch(e){accountError(e.message)}});
+function accountError(m){
+  const el=$('accountGateError');
+  el.textContent=m||'';
+  el.style.display=m?'block':'none';
+}
+$('accountNameInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter')$('createAccountBtn').click();
+});
+$('showRecoveryBtn').addEventListener('click',()=>{$('recoveryCodeText').textContent=recoveryCode||'Nicht auf diesem Gerät gespeichert';$('recoveryModal').classList.add('show')});$('closeRecoveryBtn').addEventListener('click',()=>$('recoveryModal').classList.remove('show'));$('copyRecoveryBtn').addEventListener('click',async()=>{if(recoveryCode){await navigator.clipboard?.writeText(recoveryCode);toast('Recovery-Code kopiert')}});
+
+async function loadReports(){try{const j=await api('/api/reports');reports=j.reports||[];render();updateStats()}catch(e){toast(e.message)}}
+async function loadFavorites(){
+  try{
+    const j=await api('/api/preferences');
+    favorites=j.prefs?.favorites||[];
+    helpfulReports=j.prefs?.helpfulReports||[];
+  }catch{
+    favorites=[];
+  }
+}
+async function saveFavorites(){
+  try{
+    await api('/api/preferences',{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({favorites,helpfulReports})
+    });
+  }catch(e){toast('Favoriten konnten nicht synchronisiert werden.')}
+}
+function listRows(list){return list.length?list.map(r=>`<button class="report-row" data-action="open-detail" data-id="${r.id}"><div class="badge">${esc((r.fach||'?')[0].toUpperCase())}</div><div class="main"><b>${esc(r.fach)}</b><div class="meta">${esc(r.pruefer||'Kein Prüfer')} · Semester ${esc(r.semester)} · ${esc(r.jahr)}</div><div class="author-line"><span class="author-dot">${esc((r.authorName||'?')[0].toUpperCase())}</span>${esc(r.authorName||'Unbekannt')}${r.isOwn?' <span class="own-badge">Dein Bericht</span>':''}</div></div><div class="chev">›</div></button>`).join(''):'<div class="empty">Noch keine passenden Berichte.</div>'}
+function renderRecent(){$('recentList').innerHTML=listRows([...reports].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,4))}
+function render(list=reports){$('reportList').innerHTML=list.length?[...list].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(r=>`<article class="report-detail glass"><div class="report-head"><div><h3>${esc(r.fach)}</h3><div class="meta">Semester ${esc(r.semester)} · ${esc(r.jahr)}${r.pruefer?' · '+esc(r.pruefer):''}</div><div class="author-line"><span class="author-dot">${esc((r.authorName||'?')[0].toUpperCase())}</span>Hochgeladen von ${esc(r.authorName||'Unbekannt')} ${r.isOwn?'<span class="own-badge">Dein Bericht</span>':''}</div></div><button class="btn secondary" data-action="open-detail" data-id="${r.id}">Öffnen</button></div><div class="chips"><span class="chip">${esc(r.form)}</span><span class="chip gray">${esc(r.schwierigkeit)}</span></div><div class="detail-text">${esc(r.themen)}</div></article>`).join(''):'<div class="report-detail glass empty">Keine passenden Prüfungsberichte gefunden.</div>'}
+function updateStats(){
+  const mine=reports.filter(r=>r.isOwn);
+  $('statBerichte').textContent=mine.length;
+  renderRecent();
+  updateProfileStats();
+}
+
+function examKeyForReport(r){
+  const norm=v=>String(v||'').trim().toLowerCase().replace(/\s+/g,' ');
+  return [String(r.semester||''),norm(r.fach),norm(r.pruefer||''),norm(r.form||'')].join('|');
+}
+function reportsForSameExam(r){
+  const key=examKeyForReport(r);
+  return reports.filter(x=>examKeyForReport(x)===key);
+}
+async function openExamSummary(id){
+  const r=reports.find(x=>String(x.id)===String(id));
+  if(!r)return;
+  const modal=$('examSummaryModal');
+  modal.classList.add('show');
+  $('examSummaryLoading').style.display='flex';
+  $('examSummaryContent').style.display='none';
+  $('examSummarySubtitle').textContent=`${r.fach} · Semester ${r.semester}${r.pruefer?' · '+r.pruefer:''}`;
+
+  try{
+    const j=await api('/api/exam-summary',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({examKey:examKeyForReport(r)})
+    });
+    const s=j.summary||{};
+    $('examSummaryTitle').textContent=r.fach;
+    $('examSummaryOverview').textContent=s.overview||'';
+    $('examSummaryReportCount').textContent=j.reportCount||0;
+    $('examFrequentTopics').innerHTML=(s.frequent_topics||[]).map(x=>`<span class="summary-chip">${esc(x)}</span>`).join('')||'<span class="note">Noch keine wiederkehrenden Themen erkannt.</span>';
+    $('examTypicalTasks').innerHTML=(s.typical_tasks||[]).map(x=>`<li>${esc(x)}</li>`).join('')||'<li>Noch keine typischen Aufgaben erkennbar.</li>';
+    $('examDifficulty').textContent=s.difficulty_summary||'Noch nicht eindeutig.';
+    $('examPatterns').innerHTML=(s.recurring_patterns||[]).map(x=>`<li>${esc(x)}</li>`).join('')||'<li>Noch keine stabilen Muster erkennbar.</li>';
+    $('examTips').innerHTML=(s.tips||[]).map(x=>`<li>${esc(x)}</li>`).join('')||'<li>Noch keine wiederkehrenden Tipps erkennbar.</li>';
+    $('examTrends').innerHTML=(s.recent_trends||[]).map(x=>`<li>${esc(x)}</li>`).join('')||'<li>Keine belastbare Entwicklung über die Jahre erkennbar.</li>';
+    const years=j.years||{};
+    $('examSummaryYears').textContent=years.from&&years.to?`Datenbasis: ${years.from===years.to?years.from:years.from+'–'+years.to}`:'Datenbasis: aktuelle Berichte';
+    $('examSummaryConfidence').textContent=`Aussagekraft: ${s.confidence||'niedrig'}${j.fromCache?' · gespeichert':''}`;
+    $('examSummaryLoading').style.display='none';
+    $('examSummaryContent').style.display='block';
+  }catch(e){
+    $('examSummaryLoading').innerHTML=`<b>Zusammenfassung nicht verfügbar</b><small>${esc(e.message)}</small>`;
+  }
+}
+
+function openDetail(id){const r=reports.find(x=>String(x.id)===String(id));if(!r)return;const active=document.querySelector('.panel.active')?.id;if(active!=='detail')previousTab=active||'reports';currentId=r.id;$('detailSubtitle').textContent=`${r.fach} · ${r.jahr}`;const fav=favorites.includes(String(r.id));const topics=(r.themen||'').split(/,|\.|;/).map(s=>s.trim()).filter(Boolean).slice(0,8);$('detailContent').innerHTML=`<div class="detail-card glass"><div class="detail-hero"><div class="detail-badge">${esc((r.fach||'?')[0].toUpperCase())}</div><div><h2 style="margin:0 0 5px">${esc(r.fach)}</h2><div class="meta">${esc(r.pruefer||'Kein Prüfer')}</div><div class="author-line"><span class="author-dot">${esc((r.authorName||'?')[0].toUpperCase())}</span>Hochgeladen von ${esc(r.authorName||'Unbekannt')}</div></div></div><div class="chips"><span class="chip">Semester ${esc(r.semester)}</span><span class="chip gray">${esc(r.form)}</span><span class="chip gray">${esc(r.schwierigkeit)}</span><span class="chip gray">${esc(r.jahr)}</span></div><button class="btn secondary exam-summary-btn" data-action="exam-summary" data-id="${r.id}">✦ Zusammenfassung aus ${reportsForSameExam(r).length} Bericht${reportsForSameExam(r).length===1?'':'en'}</button><div class="detail-label">Abgefragte Themen</div><div class="topic-tags">${topics.map(t=>`<span class="topic-tag">${esc(t)}</span>`).join('')}</div><div class="detail-label">Aufgaben & Inhalte</div><div class="detail-text">${esc(r.themen)}</div>${r.tipps?`<div class="detail-label">Eigene Tipps & Erfahrungen</div><div class="detail-text">${esc(r.tipps)}</div>`:''}<div class="detail-actions"><button class="btn secondary favorite ${fav?'active':''}" data-action="toggle-favorite" data-id="${r.id}">${fav?'★ Favorit':'☆ Favorit'}</button><button class="btn secondary" data-action="helpful" data-id="${r.id}">${helpfulReports.includes(String(r.id))?'✓ Hilfreich':'♡ Hilfreich'} · ${Number(r.helpfulCount||0)}</button><button class="btn secondary" data-action="share">↗ Teilen</button>${r.isOwn?`<button class="btn secondary" data-action="edit-report" data-id="${r.id}">Bearbeiten</button><button class="btn danger" data-action="remove" data-id="${r.id}">Löschen</button>`:''}</div></div>`;switchTab('detail')}
+function renderFavorites(){
+  const items=reports.filter(r=>favorites.includes(String(r.id)));
+  $('favoriteList').innerHTML=listRows(items);
+  const mine=reports.filter(r=>r.isOwn);
+  if($('myReportsList'))$('myReportsList').innerHTML=listRows(mine);
+}
+async function toggleFavorite(id){
+  id=String(id);
+  favorites=favorites.includes(id)?favorites.filter(x=>x!==id):[...favorites,id];
+  await saveFavorites();
+  updateProfileStats();
+  openDetail(id);
+}
+
+async function toggleHelpful(id){
+  try{
+    const j=await api('/api/reports?id='+encodeURIComponent(id)+'&action=helpful',{method:'PATCH'});
+    if(j.helpful) helpfulReports=[...new Set([...helpfulReports,String(id)])];
+    else helpfulReports=helpfulReports.filter(x=>x!==String(id));
+    const r=reports.find(x=>String(x.id)===String(id));
+    if(r)r.helpfulCount=j.helpfulCount;
+    openDetail(id);
+  }catch(e){toast(e.message)}
+}
+function editReport(id){
+  const r=reports.find(x=>String(x.id)===String(id));
+  if(!r||!r.isOwn)return;
+  editingReportId=String(id);
+  $('semester').value=String(r.semester||'');
+  $('jahr').value=r.jahr||new Date().getFullYear();
+  $('fach').value=r.fach||'';
+  $('pruefer').value=r.pruefer||'';
+  $('themen').value=r.themen||'';
+  $('tipps').value=r.tipps||'';
+  $('schwierigkeit').value=r.schwierigkeit||'Mittel';
+  $('form').value=r.form||'Klausur';
+  const submit=$('reportForm').querySelector('button[type="submit"]');
+  if(submit)submit.textContent='Änderungen speichern';
+  switchTab('new');
+  toast('Bericht zum Bearbeiten geöffnet');
+}
+function resetReportEdit(){
+  editingReportId=null;
+  const submit=$('reportForm').querySelector('button[type="submit"]');
+  if(submit)submit.textContent='Bericht speichern';
+}
+
+async function removeReport(id){if(!confirm('Diesen Prüfungsbericht wirklich löschen?'))return;try{await api('/api/reports?id='+encodeURIComponent(id),{method:'DELETE'});await loadReports();switchTab('reports');toast('Bericht gelöscht')}catch(e){toast(e.message)}}
+function shareCurrent(){const r=reports.find(x=>String(x.id)===String(currentId));if(!r)return;const text=`${r.fach} (${r.jahr}) – ${r.themen}`;if(navigator.share)navigator.share({title:'StudyVault Prüfungsbericht',text}).catch(()=>{});else navigator.clipboard?.writeText(text).then(()=>toast('Bericht kopiert'))}
+
+$('reportForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const payload={semester:$('semester').value,jahr:Number($('jahr').value),fach:$('fach').value.trim(),pruefer:$('pruefer').value.trim(),themen:$('themen').value.trim(),tipps:$('tipps').value.trim(),schwierigkeit:$('schwierigkeit').value,form:$('form').value};
+  try{
+    const editing=editingReportId;
+    const j=await api(editing?'/api/reports?id='+encodeURIComponent(editing):'/api/reports',{
+      method:editing?'PATCH':'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+    e.target.reset();$('jahr').value=new Date().getFullYear();localStorage.removeItem('sv_report_draft');
+    resetReportEdit();
+    await loadReports();
+    toast(editing?'Bericht aktualisiert':'Bericht veröffentlicht');window.SVMotion?.success();
+    openDetail(j.report.id);
+  }catch(err){toast(err.message)}
+});
+['semester','jahr','fach','pruefer','themen','tipps','schwierigkeit','form'].forEach(id=>$(id)?.addEventListener('input',()=>{const d={};['semester','jahr','fach','pruefer','themen','tipps','schwierigkeit','form'].forEach(k=>d[k]=$(k)?.value||'');localStorage.setItem('sv_report_draft',JSON.stringify(d))}));
+function restoreDraft(){try{const d=JSON.parse(localStorage.getItem('sv_report_draft')||'{}');Object.entries(d).forEach(([k,v])=>{if($(k)&&v)$(k).value=v})}catch{}}
+function applyFilters(){const sem=$('fSemester').value,fach=$('fFach').value.toLowerCase().trim(),pr=$('fPruefer').value.toLowerCase().trim();render(reports.filter(r=>(!sem||String(r.semester)===sem)&&(!fach||(r.fach||'').toLowerCase().includes(fach))&&(!pr||(r.pruefer||'').toLowerCase().includes(pr))))}
+$('applyFilters').addEventListener('click',applyFilters);['fSemester','fFach','fPruefer'].forEach(id=>$(id).addEventListener('input',applyFilters));$('resetFilters').addEventListener('click',()=>{$('fSemester').value='';$('fFach').value='';$('fPruefer').value='';render()});$('globalSearch').addEventListener('keydown',e=>{if(e.key==='Enter'){const q=e.target.value.toLowerCase().trim();render(reports.filter(r=>[r.fach,r.pruefer,r.themen,r.tipps,r.authorName].some(v=>(v||'').toLowerCase().includes(q))));switchTab('reports')}});
+
+
+async function loadServerDecks(){
+  if(!sessionToken||!currentUser)return;
+  try{
+    const j=await api('/api/decks');
+    serverDecks=j.decks||[];
+    window.__svServerDecks=serverDecks;
+    document.dispatchEvent(new CustomEvent('sv:decks-loaded'));
+  }catch(e){
+    console.error('Deck sync failed',e);
+    serverDecks=[];
+  }
+}
+function learnedCardCount(){
+  return serverDecks.reduce((sum,d)=>{
+    const p=d.progress||{};
+    return sum+Object.values(p).filter(v=>v==='know').length;
+  },0);
+}
+function updateProfileStats(){
+  $('statBerichte').textContent=reports.filter(r=>r.isOwn).length;
+  $('statDecks').textContent=serverDecks.length;
+  $('statLearnedCards').textContent=learnedCardCount();
+  renderFavorites();
+}
+async function migrateLocalDecksOnce(){
+  if(!currentUser)return;
+  const marker='sv_decks_migrated_v11_'+currentUser.id;
+  if(localStorage.getItem(marker)==='1')return;
+  const localKey='studyvault_decks_'+currentUser.id;
+  let local=[];
+  try{local=JSON.parse(localStorage.getItem(localKey)||'[]')}catch{}
+  if(!Array.isArray(local)||!local.length){
+    localStorage.setItem(marker,'1');
+    return;
+  }
+  const existing=new Set(serverDecks.map(d=>String(d.id)));
+  for(const d of local){
+    if(existing.has(String(d.id)))continue;
+    try{
+      await api('/api/decks',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          ...d,
+          progress:d.progress||{},
+          language:d.language||'Deutsch'
+        })
+      });
+    }catch(e){console.error('Local deck migration failed',e)}
+  }
+  await loadServerDecks();
+  localStorage.setItem(marker,'1');
+}
+
+function setAudioStep(step){['Record','Transcript','Summary'].forEach(n=>{$('step'+n)?.classList.remove('active');$('audio'+n+'View')?.classList.remove('active')});$('step'+step)?.classList.add('active');$('audio'+step+'View')?.classList.add('active')}
+function openAudio(){
+  $('audioModal').classList.add('show');setAudioStep('Record');audioBlob=null;
+  $('finishRecordingBtn').disabled=true;
+  $('audioStatus').textContent='Sprich einfach frei drauflos. Füllwörter und Pausen sind völlig okay.';
+  const draft=localStorage.getItem('sv_audio_transcript_draft');
+  if(draft&&$('audioTranscript'))$('audioTranscript').value=draft;
+}
+function closeAudio(){stopRecording(false);$('audioModal').classList.remove('show')}
+
+
+
+async function startRecording(){
+  if(!navigator.mediaDevices?.getUserMedia || typeof window.MediaRecorder==="undefined"){
+    throw new Error("Audioaufnahme wird von diesem Browser nicht unterstützt. Öffne StudyVault in Safari und versuche es erneut.");
+  }
+  let stream;
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});
+  }catch(e){
+    if(e?.name==="NotAllowedError")throw new Error("Mikrofonzugriff wurde nicht erlaubt. Aktiviere ihn in Safari für StudyVault und versuche es erneut.");
+    throw new Error("Das Mikrofon konnte nicht geöffnet werden.");
+  }
+  audioChunks=[];
+  const supported=['audio/mp4','audio/webm;codecs=opus','audio/webm'].filter(x=>{
+    try{return typeof MediaRecorder.isTypeSupported==="function"?MediaRecorder.isTypeSupported(x):true}catch{return false}
+  });
+  const mime=supported[0]||'';
+  try{mediaRecorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined)}
+  catch{stream.getTracks().forEach(t=>t.stop());throw new Error("Die Audioaufnahme konnte auf diesem Gerät nicht gestartet werden.")}
+
+  mediaRecorder.ondataavailable=e=>{if(e.data?.size)audioChunks.push(e.data)};
+  mediaRecorder.onerror=()=>{$('audioStatus').textContent='Bei der Aufnahme ist ein Fehler aufgetreten.'};
+  mediaRecorder.onstop=()=>{
+    audioBlob=new Blob(audioChunks,{type:mediaRecorder.mimeType||'audio/mp4'});
+    stream.getTracks().forEach(t=>t.stop());
+    if(audioBlob.size>4*1024*1024){
+      audioBlob=null;
+      $('finishRecordingBtn').disabled=true;
+      $('audioStatus').textContent='Die Aufnahme war zu groß. Bitte nimm einen kürzeren Audio-Bericht auf.';
+    }else{
+      $('finishRecordingBtn').disabled=!audioBlob?.size;
+    }
+  };
+  mediaRecorder.start(1000);
+  audioSeconds=0;
+  $('audioTimer').textContent='00:00';
+  audioTimer=setInterval(()=>{
+    audioSeconds++;
+    $('audioTimer').textContent=String(Math.floor(audioSeconds/60)).padStart(2,'0')+':'+String(audioSeconds%60).padStart(2,'0');
+    if(audioSeconds>=180){
+      stopRecording();
+      $('audioStatus').textContent='Maximale Aufnahmedauer von 3 Minuten erreicht. Du kannst jetzt transkribieren.';
+    }
+  },1000);
+  $('audioBox').classList.add('recording');
+  $('recordBtn').textContent='Aufnahme stoppen';
+  $('audioStatus').textContent='Aufnahme läuft… sprich ganz normal.';
+}
+function stopRecording(update=true){
+  clearInterval(audioTimer);
+  audioTimer=null;
+  try{
+    if(mediaRecorder && mediaRecorder.state!=='inactive'){
+      mediaRecorder.stop();
+    }
+  }catch(e){
+    console.error('MediaRecorder.stop failed',e);
+  }
+  $('audioBox')?.classList.remove('recording');
+  $('recordBtn').textContent='Aufnahme starten';
+  if(update && audioSeconds)$('audioStatus').textContent='Aufnahme beendet. Jetzt kannst du weitergehen.';
+}
+$('recordBtn').addEventListener('click',async()=>{
+  const btn=$('recordBtn');
+
+  if(mediaRecorder && mediaRecorder.state==='recording'){
+    btn.disabled=true;
+    btn.textContent='Wird gestoppt…';
+    try{
+      stopRecording();
+    }finally{
+      setTimeout(()=>{
+        btn.disabled=false;
+        btn.textContent='Aufnahme starten';
+      },200);
+    }
+    return;
+  }
+
+  btn.disabled=true;
+  btn.textContent='Wird gestartet…';
+  try{
+    await startRecording();
+    btn.textContent='Aufnahme stoppen';
+  }catch(e){
+    $('audioStatus').textContent=e.message||'Die Aufnahme konnte nicht gestartet werden.';
+    btn.textContent='Aufnahme starten';
+  }finally{
+    btn.disabled=false;
+  }
+});
+$('finishRecordingBtn').addEventListener('click',async()=>{
+  if(!audioBlob)return toast('Bitte zuerst eine Aufnahme erstellen.');
+  if(audioBlob.size>4*1024*1024)return toast('Die Aufnahme ist zu groß. Bitte kürzer aufnehmen.');
+
+  const btn=$('finishRecordingBtn');
+  btn.disabled=true;
+  btn.textContent='Wird transkribiert…';
+  $('audioStatus').textContent='Audio wird direkt transkribiert…';
+
+  try{
+    const fd=new FormData();
+    const type=String(audioBlob.type||'');
+    const ext=type.includes('mp4')?'m4a':type.includes('webm')?'webm':'m4a';
+    fd.append('file',audioBlob,'studyvault-audio.'+ext);
+
+    const j=await api('/api/transcribe',{method:'POST',body:fd});
+    const text=String(j.text||'').trim();
+    if(text.length<10)throw new Error('Es wurde kein brauchbares Transkript erkannt.');
+
+    $('audioTranscript').value=text;
+    localStorage.setItem('sv_audio_transcript_draft',text);
+    setAudioStep('Transcript');
+    toast('Transkript erstellt');
+  }catch(e){
+    $('audioStatus').textContent='Transkription fehlgeschlagen. Die Aufnahme bleibt erhalten.';
+    toast(e.message||'Audio konnte nicht transkribiert werden.');
+  }finally{
+    btn.disabled=false;
+    btn.textContent='Weiter';
+  }
+});
+$('backToRecordBtn').addEventListener('click',()=>setAudioStep('Record'));$('backToTranscriptBtn').addEventListener('click',()=>setAudioStep('Transcript'));
+$('analyzeAudioBtn').addEventListener('click',async()=>{const transcript=$('audioTranscript').value.trim();if(!transcript||transcript==='Audio wird transkribiert…')return toast('Bitte warte auf die Transkription oder gib Text ein.');try{$('analyzeAudioBtn').disabled=true;$('analyzeAudioBtn').textContent='Wird zusammengefasst…';const j=await api('/api/summarize-audio',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript})});const d=j.summary;$('sumTopics').innerHTML=(d.topics||[]).map(x=>`<span class="summary-chip">${esc(x)}</span>`).join('');$('sumTasks').innerHTML=(d.tasks||[]).map(x=>`<li>${esc(x)}</li>`).join('');$('sumDifficulty').innerHTML=(d.difficulty||[]).map(x=>`<li>${esc(x)}</li>`).join('');$('sumTips').innerHTML=(d.tips||[]).map(x=>`<li>${esc(x)}</li>`).join('');$('generatedReportText').value=d.reportText||'';setAudioStep('Summary')}catch(e){toast(e.message)}finally{$('analyzeAudioBtn').disabled=false;$('analyzeAudioBtn').textContent='Wichtige Infos herausziehen'}});
+$('useSummaryBtn').addEventListener('click',()=>{
+  const topics=[...document.querySelectorAll('#sumTopics .summary-chip')].map(x=>x.textContent);
+  const tasks=[...document.querySelectorAll('#sumTasks li')].map(x=>x.textContent);
+  const difficulty=[...document.querySelectorAll('#sumDifficulty li')].map(x=>x.textContent);
+  const tips=[...document.querySelectorAll('#sumTips li')].map(x=>x.textContent);
+
+  const topicBlocks=[];
+  if(topics.length) topicBlocks.push(`Themen:\n${topics.map(x=>'• '+x).join('\n')}`);
+  if(tasks.length) topicBlocks.push(`Aufgaben:\n${tasks.map(x=>'• '+x).join('\n')}`);
+  $('themen').value=topicBlocks.join('\n\n');
+
+  const tipBlocks=[];
+  if(difficulty.length) tipBlocks.push(`Schwierigkeit & Besonderheiten:\n${difficulty.map(x=>'• '+x).join('\n')}`);
+  if(tips.length) tipBlocks.push(`Tipps:\n${tips.map(x=>'• '+x).join('\n')}`);
+  $('tipps').value=tipBlocks.join('\n\n');
+
+  localStorage.removeItem('sv_audio_transcript_draft');
+  closeAudio();
+  switchTab('new');
+  toast('Audio-Auswertung übernommen');window.SVMotion?.success();
+});
+
+document.addEventListener('click',e=>{const el=e.target.closest('[data-action]');if(!el)return;const a=el.dataset.action,id=el.dataset.id;if(a==='tab')switchTab(el.dataset.target);else if(a==='audio-open')openAudio();else if(a==='audio-close')closeAudio();else if(a==='audio-backdrop'&&e.target===el)closeAudio();else if(a==='back')switchTab(previousTab);else if(a==='share')shareCurrent();else if(a==='refresh-favorites')renderFavorites();else if(a==='open-detail')openDetail(id);else if(a==='toggle-favorite')toggleFavorite(id);else if(a==='helpful')toggleHelpful(id);else if(a==='exam-summary')openExamSummary(id);else if(a==='edit-report')editReport(id);else if(a==='remove')removeReport(id)});
+$('exportBtn').addEventListener('click',async()=>{
+  try{
+    const payload={user:currentUser,reports:reports.filter(r=>r.isOwn),favorites,learningSets:serverDecks,exportedAt:new Date().toISOString()};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='studyvault_meine_daten.json';a.click();URL.revokeObjectURL(a.href);
+  }catch{toast('Export konnte nicht erstellt werden.')}
+});
+$('deleteAccountBtn').addEventListener('click',()=>{
+  $('deleteAccountName').value='';
+  $('deleteAccountError').style.display='none';
+  $('deleteAccountModal').classList.add('show');
+  setTimeout(()=>$('deleteAccountName').focus(),120);
+});
+$('closeDeleteAccount').addEventListener('click',()=>$('deleteAccountModal').classList.remove('show'));
+$('cancelDeleteAccount').addEventListener('click',()=>$('deleteAccountModal').classList.remove('show'));
+$('deleteAccountModal').addEventListener('click',e=>{
+  if(e.target===$('deleteAccountModal'))$('deleteAccountModal').classList.remove('show');
+});
+$('confirmDeleteAccount').addEventListener('click',async()=>{
+  const btn=$('confirmDeleteAccount');
+  const name=$('deleteAccountName').value.trim();
+  const err=$('deleteAccountError');
+  err.style.display='none';
+
+  if(!name){
+    err.textContent='Bitte gib deinen Account-Namen ein.';
+    err.style.display='block';
+    return;
+  }
+
+  if(!confirm('Account und alle zugehörigen Daten wirklich endgültig löschen?')){
+    return;
+  }
+
+  btn.disabled=true;
+  btn.textContent='Wird gelöscht…';
+
+  try{
+    await api('/api/account?action=delete',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({confirmName:name})
+    });
+
+    // Clear only this app's local session/cache data after successful server deletion.
+    localStorage.removeItem('sv_session');
+    localStorage.removeItem('sv_report_draft');
+    localStorage.removeItem('sv_audio_transcript_draft');
+    if(currentUser?.id){
+      localStorage.removeItem('studyvault_decks_'+currentUser.id);
+      localStorage.removeItem('sv_decks_migrated_v11_'+currentUser.id);
+    }
+
+    sessionToken='';
+    currentUser=null;
+    reports=[];
+    favorites=[];
+    helpfulReports=[];
+    serverDecks=[];
+
+    $('deleteAccountModal').classList.remove('show');
+    toast('Account wurde vollständig gelöscht');
+    setTimeout(()=>location.reload(),700);
+  }catch(e){
+    err.textContent=e.message||'Account konnte nicht gelöscht werden.';
+    err.style.display='block';
+    btn.disabled=false;
+    btn.textContent='Endgültig löschen';
+  }
+});
+
+$('deleteBtn').addEventListener('click',()=>{
+  if(!confirm('Account auf diesem Gerät wechseln? Deine Cloud-Daten bleiben gespeichert.'))return;
+  localStorage.removeItem('sv_session');
+  sessionToken='';currentUser=null;reports=[];favorites=[];helpfulReports=[];serverDecks=[];
+  location.reload();
+});
+$('reportForm').addEventListener('reset',()=>setTimeout(()=>{resetReportEdit();$('jahr').value=new Date().getFullYear()},0));
+$('jahr').value=new Date().getFullYear();restoreDraft();initAccount();
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+
+
+<script type="module">
+const $v8 = (id)=>document.getElementById(id);
+
+let learnFile=null;
+let extractedDocument=null;
+let flashcards=[];
+let currentCard=0;
+let cardShowingAnswer=false;
+let cardRatings={};
+let currentDeckId=null;
+
+const MAX_TOTAL_CHARS = 480000;
+const CHUNK_TARGET_CHARS = 65000;
+
+function escapeV8(s=""){
+  return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+}
+function setApiStatus(text, cls=""){
+  const e=$v8("learnApiStatus"); if(!e)return;
+  e.textContent=text; e.className="link "+cls;
+}
+function showLearnError(message){
+  let box=$v8("learnErrorBox");
+  if(!box){
+    box=document.createElement("div");
+    box.id="learnErrorBox"; box.className="learn-error";
+    $v8("generateCardsBtn")?.closest(".form-card")?.appendChild(box);
+  }
+  box.textContent=message; box.style.display="block";
+}
+function clearLearnError(){
+  const box=$v8("learnErrorBox"); if(box)box.style.display="none";
+}
+
+async function checkBackend(){
+  try{
+    const r=await fetch("/api/health",{cache:"no-store",headers:authHeaders()});
+    if(!r.ok) throw new Error();
+    const j=await r.json();
+    if(j.aiReady) setApiStatus("KI verbunden","ok");
+    else setApiStatus("KI-Konfiguration fehlt","warn");
+  }catch{
+    setApiStatus("Backend nicht aktiv","error");
+  }
+}
+checkBackend();
+
+$v8("chooseLearnFile")?.addEventListener("click",()=>$v8("learnFile").click());
+
+$v8("learnFile")?.addEventListener("change",async(e)=>{
+  clearLearnError();
+  const file=e.target.files?.[0];
+  if(!file)return;
+  learnFile=file;
+  extractedDocument=null;
+  const info=$v8("learnFileInfo");
+  info.style.display="block";
+  info.textContent=`${file.name} · ${(file.size/1024/1024).toFixed(2)} MB · bereit zur Analyse`;
+  $v8("generateCardsBtn").disabled=false;
+});
+
+function setLearnProgress(pct,title,text){
+  const p=$v8("learnProgress");
+  p.style.display="flex";
+  $v8("learnProgressPct").textContent=Math.round(pct)+"%";
+  const ring=p.querySelector(".learn-progress-ring");
+  ring.style.background=`conic-gradient(#6b8fba ${pct*3.6}deg,rgba(115,139,160,.12) ${pct*3.6}deg)`;
+  $v8("learnProgressTitle").textContent=title;
+  $v8("learnProgressText").textContent=text;
+}
+
+async function waitForPdfJs(timeoutMs=10000){
+  const started=Date.now();
+  while(!window.pdfjsLib){
+    if(Date.now()-started>timeoutMs){
+      throw new Error("PDF-Modul konnte nicht geladen werden. Bitte prüfe die Internetverbindung und lade die App neu.");
+    }
+    await new Promise(resolve=>setTimeout(resolve,80));
+  }
+  return window.pdfjsLib;
+}
+
+async function extractPdf(file){
+  setLearnProgress(8,"PDF wird geöffnet…","Seiten und Text werden lokal ausgelesen");
+
+  let pdfjs;
+  try{
+    pdfjs=await waitForPdfJs();
+  }catch(err){
+    throw new Error(err?.message || "PDF-Modul konnte nicht gestartet werden.");
+  }
+
+  pdfjs.GlobalWorkerOptions.workerSrc=
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+  let pdf;
+  try{
+    const bytes=new Uint8Array(await file.arrayBuffer());
+    const task=pdfjs.getDocument({data:bytes});
+    pdf=await task.promise;
+  }catch(err){
+    console.error("StudyVault PDF open error:",err);
+    throw new Error("Das PDF konnte nicht geöffnet werden. Bitte prüfe, ob die Datei beschädigt oder passwortgeschützt ist.");
+  }
+
+  const pages=[];
+  let totalChars=0;
+
+  for(let i=1;i<=pdf.numPages;i++){
+    try{
+      const page=await pdf.getPage(i);
+      const content=await page.getTextContent();
+
+      const items=Array.from(content && content.items ? content.items : []);
+      const parts=[];
+      for(let j=0;j<items.length;j++){
+        const value=items[j] && typeof items[j].str==="string" ? items[j].str : "";
+        if(value) parts.push(value);
+      }
+      const text=parts.join(" ").replace(/\s+/g," ").trim();
+
+      const remaining=MAX_TOTAL_CHARS-totalChars;
+      if(remaining<=0) break;
+
+      const clipped=text.slice(0,remaining);
+      pages.push({page:i,text:clipped});
+      totalChars+=clipped.length;
+
+      const pct=8+(i/pdf.numPages)*28;
+      setLearnProgress(pct,"PDF wird gelesen…",`Seite ${i} von ${pdf.numPages}`);
+    }catch(err){
+      console.error(`StudyVault PDF page ${i} error:`,err);
+      throw new Error(`Seite ${i} des PDFs konnte nicht gelesen werden. Bitte versuche ein anderes PDF oder exportiere die Datei erneut.`);
+    }
+  }
+
+  const nonEmpty=pages.filter(p=>p.text.length>40);
+  const avg=nonEmpty.length ? totalChars/nonEmpty.length : 0;
+
+  if(totalChars<500 || avg<80){
+    throw new Error(
+      "In diesem PDF wurde kaum auslesbarer Text gefunden. Es scheint überwiegend gescannt oder bildbasiert zu sein. " +
+      "Für diese Version brauche ich ein PDF mit auswählbarem Text."
+    );
+  }
+
+  return {
+    fileName:file.name,
+    pageCount:pdf.numPages,
+    pages,
+    totalChars,
+    truncated:pages.length<pdf.numPages || totalChars>=MAX_TOTAL_CHARS
+  };
+}
+
+async function extractTextFile(file){
+  const text=(await file.text()).replace(/\r\n/g,"\n").trim();
+  if(text.length<100) throw new Error("Die Datei enthält zu wenig Text für sinnvolle Lernkarten.");
+  const sliced=text.slice(0,MAX_TOTAL_CHARS);
+  return {
+    fileName:file.name,pageCount:1,pages:[{page:1,text:sliced}],
+    totalChars:sliced.length,truncated:text.length>sliced.length
+  };
+}
+
+async function extractDocument(file){
+  const ext=file.name.toLowerCase().split(".").pop();
+  if(ext==="pdf") return await extractPdf(file);
+  if(ext==="txt" || ext==="md") return await extractTextFile(file);
+  throw new Error("Aktuell werden PDF, TXT und Markdown unterstützt.");
+}
+
+function targetCount(){
+  const scope=$v8("learnScope").value;
+  return scope==="kurz"?15:scope==="ausfuehrlich"?50:30;
+}
+
+function makeChunks(doc,totalCards){
+  // Keep every AI call small: max ~10 requested cards and max ~45k chars.
+  // This avoids one giant 30/50-card synchronous request timing out.
+  const desiredCalls=Math.max(1,Math.ceil(totalCards/10));
+  const totalChars=doc.pages.reduce((sum,p)=>sum+p.text.length,0);
+  const targetChars=Math.min(45000,Math.max(8000,Math.ceil(totalChars/desiredCalls)));
+
+  const chunks=[];
+  let current=[],chars=0;
+
+  for(const p of doc.pages){
+    if(current.length && (chars+p.text.length>targetChars || chars>45000)){
+      chunks.push(current);
+      current=[];
+      chars=0;
+    }
+    current.push(p);
+    chars+=p.text.length;
+  }
+  if(current.length)chunks.push(current);
+
+  // If the PDF is short but many cards were requested, split page groups further
+  // so no individual request needs to create a huge deck.
+  while(chunks.length<desiredCalls){
+    let idx=-1,maxLen=0;
+    chunks.forEach((c,i)=>{
+      if(c.length>1 && c.length>maxLen){idx=i;maxLen=c.length}
+    });
+    if(idx<0)break;
+    const c=chunks[idx];
+    const mid=Math.ceil(c.length/2);
+    chunks.splice(idx,1,c.slice(0,mid),c.slice(mid));
+  }
+  return chunks;
+}
+
+function distributeCounts(chunks,total){
+  if(!chunks.length)return[];
+  const counts=new Array(chunks.length).fill(Math.floor(total/chunks.length));
+  let rest=total-counts.reduce((a,b)=>a+b,0);
+  let i=0;
+  while(rest>0){counts[i%counts.length]++;rest--;i++}
+
+  // Backend intentionally caps one request at 10 cards.
+  for(let j=0;j<counts.length;j++)counts[j]=Math.min(10,Math.max(1,counts[j]));
+  return counts;
+}
+
+function normalizedQuestion(q){
+  return q.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,"").replace(/\s+/g," ").trim();
+}
+function dedupeCards(cards){
+  const seen=new Set(),out=[];
+  for(const c of cards){
+    const key=normalizedQuestion(c.question||"");
+    if(!key || seen.has(key))continue;
+    seen.add(key);
+    out.push(c);
+  }
+  return out;
+}
+
+async function generateChunk(pages,count,index,totalChunks){
+  const payload={
+    fileName:learnFile.name,
+    pages,
+    requestedCount:count,
+    difficulty:$v8("learnDifficulty").value,
+    scope:$v8("learnScope").value,
+    focus:$v8("learnFocus").value,
+    language:$v8("learnLanguage").value,
+    chunkIndex:index,
+    totalChunks
+  };
+  const r=await fetch("/api/generate-cards",{
+    method:"POST",
+    headers:authHeaders({"Content-Type":"application/json"}),
+    body:JSON.stringify(payload)
+  });
+  let j={};
+  try{j=await r.json()}catch{}
+  if(!r.ok){
+    const detail=j.detail?` (${j.detail})`:"";
+    throw new Error((j.error||`KI-Fehler (${r.status})`)+detail);
+  }
+  return j.cards||[];
+}
+
+$v8("generateCardsBtn")?.addEventListener("click",async()=>{
+  if(!learnFile)return;
+  clearLearnError();
+  $v8("generateCardsBtn").disabled=true;
+  $v8("deckArea").style.display="none";
+
+  try{
+    extractedDocument=await extractDocument(learnFile);
+    const total=targetCount();
+    const chunks=makeChunks(extractedDocument,total);
+    const counts=distributeCounts(chunks,total);
+
+    let cards=[];
+    for(let i=0;i<chunks.length;i++){
+      const pct=38+(i/chunks.length)*54;
+      setLearnProgress(
+        pct,
+        "KI erstellt Lernkarten…",
+        chunks.length===1 ? "Inhalte werden geprüft und in Karten umgewandelt" : `Dokumentabschnitt ${i+1} von ${chunks.length}`
+      );
+      const part=await generateChunk(chunks[i],counts[i],i,chunks.length);
+      cards.push(...part);
+    }
+
+    flashcards=dedupeCards(cards).slice(0,total);
+    if(flashcards.length<3){
+      throw new Error("Aus dem Dokument konnten nicht genügend verlässliche Lernkarten erstellt werden.");
+    }
+
+    setLearnProgress(96,"Qualitätsprüfung…","Dopplungen entfernen und Quellen zuordnen");
+    verifySources();
+    await saveCurrentDeck();
+    setLearnProgress(100,"Fertig",`${flashcards.length} Lernkarten wurden erstellt`);
+
+    currentCard=0;cardShowingAnswer=false;cardRatings={};
+    setupDeckUi();
+    setTimeout(()=>{
+      $v8("learnProgress").style.display="none";
+      $v8("deckArea").style.display="block";
+      $v8("deckArea").scrollIntoView({behavior:"smooth",block:"start"});
+    },450);
+  }catch(err){
+    console.error("StudyVault learning flow error:",err);
+    $v8("learnProgress").style.display="none";
+    const raw=String(err?.message||"");
+    const friendly =
+      raw.includes("undefined is not a function") ||
+      raw.includes("is not a function")
+        ? "Das PDF konnte auf diesem Gerät nicht korrekt verarbeitet werden. Bitte lade die aktualisierte App-Version neu und versuche es erneut."
+        : (raw || "Die Lernkarten konnten nicht erstellt werden.");
+    showLearnError(friendly);
+  }finally{
+    $v8("generateCardsBtn").disabled=false;
+  }
+});
+
+function verifySources(){
+  if(!extractedDocument)return;
+  const pageMap=new Map(extractedDocument.pages.map(p=>[Number(p.page),p.text]));
+  flashcards=flashcards.map(c=>{
+    const pages=(c.source_pages||[]).map(Number).filter(p=>pageMap.has(p));
+    return {
+      ...c,
+      source_pages:pages.length?pages:[Number(extractedDocument.pages[0]?.page||1)],
+      source_excerpt:String(c.source_excerpt||"").trim()
+    };
+  });
+}
+
+function setupDeckUi(){
+  $v8("deckTitle").textContent=(learnFile?.name||"Lernkartenset").replace(/\.[^.]+$/,"");
+  $v8("deckMeta").textContent=$v8("learnFocus").options[$v8("learnFocus").selectedIndex].text;
+  $v8("deckCount").textContent=flashcards.length;
+  const d=$v8("learnDifficulty").value;
+  $v8("deckDifficulty").textContent=d.charAt(0).toUpperCase()+d.slice(1);
+  renderFlashcardV8();
+}
+
+function renderFlashcardV8(){
+  if(!flashcards.length)return;
+  const c=flashcards[currentCard];
+  $v8("cardCounter").textContent=`${currentCard+1} / ${flashcards.length}`;
+  $v8("cardTopic").textContent=c.topic||"Dokument";
+  $v8("cardSideLabel").textContent=cardShowingAnswer?"Antwort":"Frage";
+  $v8("cardText").textContent=cardShowingAnswer?c.answer:c.question;
+  $v8("flipCardBtn").textContent=cardShowingAnswer?"Frage anzeigen":"Antwort anzeigen";
+  $v8("flashcard").classList.toggle("flipped",cardShowingAnswer);
+
+  const src=$v8("cardSource");
+  if(cardShowingAnswer && c.source_pages?.length){
+    src.textContent="Quelle: "+c.source_pages.map(p=>"S. "+p).join(", ");
+    src.style.display="inline-flex";
+  }else{
+    src.textContent="";src.style.display="none";
+  }
+
+  let excerpt=document.querySelector("#flashcard .source-excerpt");
+  if(cardShowingAnswer && c.source_excerpt){
+    if(!excerpt){
+      excerpt=document.createElement("div");
+      excerpt.className="source-excerpt";
+      document.querySelector("#flashcard .flashcard-content").appendChild(excerpt);
+    }
+    excerpt.textContent="„"+c.source_excerpt+"“";
+    excerpt.style.display="block";
+  }else if(excerpt) excerpt.style.display="none";
+
+  const done=Object.keys(cardRatings).length;
+  $v8("deckProgress").textContent=Math.round(done/flashcards.length*100)+"%";
+}
+
+$v8("flipCardBtn")?.addEventListener("click",()=>{
+  cardShowingAnswer=!cardShowingAnswer;
+  renderFlashcardV8();
+  window.SVMotion?.cardReveal($v8("flashcard"));
+});
+document.querySelectorAll(".rating-btn").forEach(btn=>{
+  btn.addEventListener("click",async()=>{
+    if(!flashcards.length)return;
+    const cardKey=flashcards[currentCard].id??currentCard;
+    cardRatings[cardKey]=btn.dataset.rating;
+    currentCard=(currentCard+1)%flashcards.length;
+    cardShowingAnswer=false;
+    await window.SVMotion?.cardNext($v8("flashcard"),()=>renderFlashcardV8());
+    if(btn.dataset.rating==="know")window.SVMotion?.success();
+
+    if(currentDeckId){
+      const deckId=currentDeckId;
+      const rating=btn.dataset.rating;
+      progressSyncChain=progressSyncChain.then(async()=>{
+        try{
+          const j=await api('/api/decks?id='+encodeURIComponent(deckId),{
+            method:'PATCH',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({cardId:String(cardKey),rating})
+          });
+          const decks=deckStorage();
+          window.__svServerDecks=decks.map(d=>String(d.id)===String(deckId)?j.deck:d);
+          if(typeof loadServerDecks==='function')await loadServerDecks();
+          if(typeof updateProfileStats==='function')updateProfileStats();
+        }catch(e){
+          console.error('Progress sync failed',e);
+          if(typeof toast==='function')toast('Lernfortschritt wird beim nächsten Versuch erneut synchronisiert.');
+        }
+      });
+    }
+  });
+});
+
+function deckStorage(){
+  return Array.isArray(window.__svServerDecks)?window.__svServerDecks:[];
+}
+async function saveCurrentDeck(){
+  const id=(globalThis.crypto?.randomUUID?.()||('deck-'+Date.now()+'-'+Math.random().toString(36).slice(2)));
+  currentDeckId=id;
+  const deck={
+    id,
+    name:(learnFile?.name||"Lernkartenset").replace(/\.[^.]+$/,""),
+    fileName:learnFile?.name||"",
+    createdAt:new Date().toISOString(),
+    difficulty:$v8("learnDifficulty").value,
+    focus:$v8("learnFocus").value,
+    language:$v8("learnLanguage").value,
+    cards:flashcards,
+    progress:{}
+  };
+  const j=await api('/api/decks',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(deck)
+  });
+  window.__svServerDecks=[j.deck,...deckStorage().filter(x=>String(x.id)!==String(j.deck.id))];
+  if(typeof loadServerDecks==='function')await loadServerDecks();
+  renderSavedDecks();
+  if(typeof updateProfileStats==='function')updateProfileStats();
+}
+function renderSavedDecks(){
+  const decks=deckStorage();
+  const title=$v8("savedDecksTitle"),box=$v8("savedDecks");
+  if(!title||!box)return;
+  title.style.display=decks.length?"flex":"none";
+  box.innerHTML=decks.map(d=>{
+    const progress=d.progress||{};
+    const known=Object.values(progress).filter(v=>v==="know").length;
+    return `
+    <button class="saved-deck" data-deck-id="${d.id}">
+      <div class="saved-deck-icon">▤</div>
+      <div class="saved-deck-main">
+        <b>${escapeV8(d.name)}</b>
+        <small>${d.cards.length} Karten · ${known} sicher · ${escapeV8(d.difficulty)} · ${new Date(d.createdAt).toLocaleDateString("de-DE")}</small>
+      </div>
+      <span class="chev">›</span>
+    </button>`;
+  }).join("");
+  box.querySelectorAll("[data-deck-id]").forEach(btn=>btn.addEventListener("click",()=>{
+    const d=decks.find(x=>String(x.id)===btn.dataset.deckId);if(!d)return;
+    flashcards=d.cards;currentDeckId=d.id;currentCard=0;cardShowingAnswer=false;
+    cardRatings={...(d.progress||{})};
+    $v8("deckTitle").textContent=d.name;
+    $v8("deckMeta").textContent=d.focus||"Gespeichert";
+    $v8("deckCount").textContent=flashcards.length;
+    $v8("deckDifficulty").textContent=(d.difficulty||"mittel").replace(/^./,m=>m.toUpperCase());
+    renderFlashcardV8();
+    $v8("deckArea").style.display="block";
+    $v8("deckArea").scrollIntoView({behavior:"smooth",block:"start"});
+    api('/api/preferences',{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({lastActiveDeckId:d.id})
+    }).catch(()=>{});
+  }));
+}
+$v8("clearDecksBtn")?.addEventListener("click",async()=>{
+  if(!confirm("Alle gespeicherten Lernkartensets löschen?"))return;
+  const decks=[...deckStorage()];
+  for(const d of decks){
+    try{await api('/api/decks?id='+encodeURIComponent(d.id),{method:'DELETE'})}catch{}
+  }
+  if(typeof loadServerDecks==='function')await loadServerDecks();
+  renderSavedDecks();
+  if(typeof updateProfileStats==='function')updateProfileStats();
+});
+$v8("resetLearnBtn")?.addEventListener("click",()=>{
+  $v8("learnFile").value="";
+  learnFile=null;extractedDocument=null;
+  $v8("learnFileInfo").style.display="none";
+  $v8("generateCardsBtn").disabled=true;
+  $v8("learnProgress").style.display="none";
+  $v8("deckArea").style.display="none";
+  clearLearnError();
+});
+document.addEventListener('sv:decks-loaded',()=>renderSavedDecks());
+renderSavedDecks();
+</script>
+
+
+
+<script>
+
+function svSemesterNumber(){
+ const el=document.getElementById('semester');
+ const raw=String(el?.value||'').trim();
+ const m=raw.match(/[1-6]/); return m?m[0]:'';
+}
+function svSyncSubjectToSemester(){
+ const sem=svSemesterNumber(), fach=document.getElementById('fach'), trigger=document.getElementById('subjectTrigger');
+ if(fach && fach.value){
+   const allowed=sem && (SV_SUBJECT_CATALOG[sem+'. Semester']||[]).includes(fach.value);
+   if(!allowed){fach.value='';document.getElementById('subjectTriggerText').textContent='Fach auswählen'}
+ }
+ if(trigger){trigger.disabled=!sem;document.getElementById('subjectTriggerText').textContent=sem?(fach?.value||'Fach auswählen'):'Zuerst Semester auswählen'}
+ svBuildSubjectMenu('subjectMenu',fach?.value||'',false,sem);
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  requestAnimationFrame(()=>{
+    const active=document.querySelector('.panel.active') || document.querySelector('.panel:not([style*="display: none"])');
+    if(active) window.SVMotion?.screen(active);
+  });
+});
+</script>
+
+<script>
+const SV_SUBJECT_CATALOG={"1. Semester": ["BWL", "Externes Rechnungswesen 1", "Wirtschaftsmathematik", "Bankbetriebslehre und Zahlungsverkehr", "Wirtschaftsenglisch"], "2. Semester": ["Jahresabschluss und Steuern", "VWL 1", "Recht 1", "Anlagegeschäft"], "3. Semester": ["Infin", "Internes Rechnungswesen", "VWL 2", "Kreditgeschäft"], "4. Semester": ["Marketing", "Recht 2", "Statistik", "Privat Banking", "Finanzierungsgeschäft"], "5. Semester": ["Projektmanagement", "VWL 3", "Vertriebsmanagement", "Basic English"], "6. Semester": ["Unternehmensführung", "BW und RM", "Specialized English"]};
+function svEsc(v){return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
+function svBuildSubjectMenu(id,current='',all=false,semester=''){
+ const m=document.getElementById(id);if(!m)return;
+ let h=all?'<button type="button" class="sv-option" data-subject="">Alle Fächer</button>':'';
+ let entries=Object.entries(SV_SUBJECT_CATALOG);
+ if(semester && semester!=='Alle') entries=entries.filter(([sem])=>sem.startsWith(String(semester)+'.') || sem===String(semester) || sem.startsWith(String(semester)+' '));
+ entries.forEach(([sem,items])=>{
+   h+=`<div class="sv-semester-label">${svEsc(sem)}</div>`;
+   items.forEach(x=>h+=`<button type="button" class="sv-option${x===current?' selected':''}" data-subject="${svEsc(x)}">${svEsc(x)}</button>`);
+ });
+ if(!entries.length) h='<div class="sv-semester-label">Bitte zuerst Semester auswählen</div>';
+ m.innerHTML=h;
+}
+function svCloseSelect(el){if(el){el.classList.remove('open');el.querySelector('.sv-select-trigger')?.setAttribute('aria-expanded','false')}}
+function svToggleSelect(id){const el=document.getElementById(id);document.querySelectorAll('.sv-select.open').forEach(x=>{if(x!==el)svCloseSelect(x)});const o=!el.classList.contains('open');el.classList.toggle('open',o);el.querySelector('.sv-select-trigger').setAttribute('aria-expanded',String(o))}
+function svSetReportSubject(v){document.getElementById('fach').value=v;document.getElementById('subjectTriggerText').textContent=v||'Fach auswählen';svBuildSubjectMenu('subjectMenu',v,false,svSemesterNumber());svCloseSelect(document.getElementById('subjectSelect'))}
+function svSetSearchSubject(v){document.getElementById('searchSubjectTriggerText').textContent=v||'Direkt nach Fach filtern';const q=document.getElementById('globalSearch');q.value=v;svBuildSubjectMenu('searchSubjectMenu',v,true);svCloseSelect(document.getElementById('searchSubjectSelect'));if(v){q.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}))}}
+document.addEventListener('DOMContentLoaded',()=>{svSyncSubjectToSemester();svBuildSubjectMenu('searchSubjectMenu','',true);document.getElementById('subjectTrigger')?.addEventListener('click',()=>{svSyncSubjectToSemester();if(svSemesterNumber())svToggleSelect('subjectSelect')});document.getElementById('searchSubjectTrigger')?.addEventListener('click',()=>svToggleSelect('searchSubjectSelect'));document.getElementById('subjectMenu')?.addEventListener('click',e=>{const b=e.target.closest('[data-subject]');if(b)svSetReportSubject(b.dataset.subject)});document.getElementById('searchSubjectMenu')?.addEventListener('click',e=>{const b=e.target.closest('[data-subject]');if(b)svSetSearchSubject(b.dataset.subject)});document.addEventListener('click',e=>{if(!e.target.closest('.sv-select'))document.querySelectorAll('.sv-select.open').forEach(svCloseSelect)});document.getElementById('semester')?.addEventListener('change',()=>{svCloseSelect(document.getElementById('subjectSelect'));svSyncSubjectToSemester()});document.addEventListener('click',()=>setTimeout(()=>{const v=document.getElementById('fach')?.value||'';const t=document.getElementById('subjectTriggerText');if(t&&v&&t.textContent!==v){t.textContent=v;svBuildSubjectMenu('subjectMenu',v,false,svSemesterNumber())}},0),true)});
+</script></body>
+</html>

@@ -1,0 +1,30 @@
+StudyVault v28 – Direct OpenAI Audio Setup
+
+WHY:
+Netlify AI Gateway is no longer used for speech-to-text.
+
+BEFORE DEPLOYING:
+1. Create/get an OpenAI API key from platform.openai.com.
+2. In Netlify open:
+   Project configuration → Environment variables
+3. Add exactly:
+   Key: STUDYVAULT_OPENAI_API_KEY
+   Value: <your OpenAI API key>
+4. Save.
+5. THEN deploy v28.
+
+OPTIONAL:
+STUDYVAULT_TRANSCRIBE_MODEL = gpt-4o-mini-transcribe
+
+IMPORTANT:
+Do not put the API key into index.html or any browser JavaScript.
+It belongs only in the Netlify Environment Variables.
+
+FLOW:
+iPhone MediaRecorder
+→ /api/transcribe Netlify Function
+→ direct https://api.openai.com/v1/audio/transcriptions
+→ transcript
+→ StudyVault transcript screen
+
+Netlify AI Gateway is bypassed for this operation.

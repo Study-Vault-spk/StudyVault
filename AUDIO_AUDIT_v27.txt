@@ -1,0 +1,26 @@
+StudyVault v27 – Audio Stability Audit
+
+PASS:
+- exactly one startRecording()
+- exactly one stopRecording()
+- exactly one record-button handler
+- exactly one continue/transcription handler
+- no SpeechRecognition / webkitSpeechRecognition remains
+- no live-speech restart loop remains
+- required audio DOM IDs each occur exactly once
+- all inline frontend JavaScript passes node --check
+- all Netlify Functions pass node --check
+
+ARCHITECTURE:
+1. Browser only records with MediaRecorder.
+2. Stop is purely local and does not wait for any network or speech service.
+3. MediaRecorder.onstop creates the audio Blob and enables Weiter.
+4. Weiter uploads exactly one FormData audio file to /api/transcribe.
+5. /api/transcribe uses the official OpenAI SDK.
+6. Official SDK uses Netlify AI Gateway environment variables.
+7. gpt-4o-mini-transcribe performs speech-to-text.
+8. Only after a valid transcript is returned does the UI advance to the transcript step.
+
+Known boundary:
+A real Netlify AI Gateway call cannot be executed from this offline build environment.
+The code path now follows the supported official-client pattern rather than custom gateway request formats.
